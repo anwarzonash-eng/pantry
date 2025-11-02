@@ -33,3 +33,29 @@ a { color: var(--accent); }
   margin: 0 auto;
   padding: 24px 16px;
 }
+
+.muted { color: var(--muted); }
+
+.page-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.button {
+  display: inline-block;
+  padding: 8px 14px;
+  border-radius: 6px;
+  background: var(--accent);
+  color: #fff;
+  text-decoration: none;
+  border: 0;
+  font: inherit;
+  cursor: pointer;
+}
+
+.recipe-list { list-style: none; padding: 0; }
+.recipe-list li { padding: 12px 0; border-bottom: 1px solid var(--border); }
+.recipe-list a { font-weight: 600; font-size: 1.1rem; text-decoration: none; }
+.recipe-list p { margin: 4px 0 0; }
