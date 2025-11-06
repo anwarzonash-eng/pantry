@@ -1,0 +1,38 @@
+import { notFound } from "next/navigation";
+import { getDb } from "@/lib/db";
+import { getRecipe } from "@/lib/recipes";
+
+export const dynamic = "force-dynamic";
+
+export default async function RecipePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const recipe = getRecipe(getDb(), Number(id));
+  if (!recipe) notFound();
+
+  return (
+    <article className="recipe">
+      <h1>{recipe.title}</h1>
+      {recipe.description && <p className="lead">{recipe.description}</p>}
+      <p className="muted">Serves {recipe.servings}</p>
+
+      <div className="recipe-body">
+        <section>
+          <h2>Ingredients</h2>
+          <ul className="ingredients">
+            {recipe.ingredients.map((line, i) => (
+              <li key={i}>{line}</li>
+            ))}
+          </ul>
+        </section>
+        <section>
+          <h2>Steps</h2>
+          <ol className="steps">
+            {recipe.steps.map((step, i) => (
+              <li key={i}>{step}</li>
+            ))}
+          </ol>
+        </section>
+      </div>
+    </article>
+  );
+}

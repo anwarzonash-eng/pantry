@@ -59,3 +59,12 @@ a { color: var(--accent); }
 .recipe-list li { padding: 12px 0; border-bottom: 1px solid var(--border); }
 .recipe-list a { font-weight: 600; font-size: 1.1rem; text-decoration: none; }
 .recipe-list p { margin: 4px 0 0; }
+
+.lead { font-size: 1.1rem; }
+.recipe-body { display: grid; grid-template-columns: 1fr 2fr; gap: 32px; }
+.ingredients { padding-left: 18px; }
+.steps li { margin-bottom: 10px; }
+
+@media (max-width: 700px) {
+  .recipe-body { grid-template-columns: 1fr; gap: 0; }
+}
