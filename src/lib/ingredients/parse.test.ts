@@ -38,3 +38,25 @@ describe("parseIngredient", () => {
     expect(p("2 Tbsp. butter").unit).toBe("tbsp");
   });
 });
+
+describe("parseIngredient, more forms", () => {
+  it("unicode fractions", () => {
+    expect(p("½ cup sugar").quantity).toBe(0.5);
+    expect(p("1½ cups milk").quantity).toBe(1.5);
+    expect(p("1 ¼ tsp baking soda").quantity).toBe(1.25);
+    expect(p("¾ cup oats").quantity).toBe(0.75);
+  });
+
+  it("ranges", () => {
+    const r = parseIngredient("2-3 cloves garlic");
+    expect([r.quantity, r.quantityMax, r.unit, r.name]).toEqual([2, 3, "clove", "garlic"]);
+    expect(parseIngredient("2 to 3 tbsp honey").quantityMax).toBe(3);
+    expect(parseIngredient("4–6 slices bread").quantityMax).toBe(6);
+  });
+
+  it("a / an and 'of'", () => {
+    expect(p("a pinch of salt")).toEqual({ quantity: 1, unit: "pinch", name: "salt", note: "" });
+    expect(p("an onion, diced")).toEqual({ quantity: 1, unit: null, name: "onion", note: "diced" });
+    expect(p("2 cups of water").name).toBe("water");
+  });
+});
