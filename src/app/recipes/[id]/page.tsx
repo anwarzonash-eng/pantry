@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getDb } from "@/lib/db";
 import { getRecipe } from "@/lib/recipes";
+import { IngredientLine } from "@/components/IngredientLine";
 
 export const dynamic = "force-dynamic";
 
@@ -20,7 +21,7 @@ export default async function RecipePage({ params }: { params: Promise<{ id: str
           <h2>Ingredients</h2>
           <ul className="ingredients">
             {recipe.ingredients.map((line, i) => (
-              <li key={i}>{line}</li>
+              <IngredientLine key={i} line={line} />
             ))}
           </ul>
         </section>
