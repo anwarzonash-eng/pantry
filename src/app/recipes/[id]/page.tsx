@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getDb } from "@/lib/db";
 import { getRecipe } from "@/lib/recipes";
@@ -12,7 +13,10 @@ export default async function RecipePage({ params }: { params: Promise<{ id: str
 
   return (
     <article className="recipe">
-      <h1>{recipe.title}</h1>
+      <div className="page-head">
+        <h1>{recipe.title}</h1>
+        <Link href={`/recipes/${recipe.id}/edit`}>Edit</Link>
+      </div>
       {recipe.description && <p className="lead">{recipe.description}</p>}
       <p className="muted">Serves {recipe.servings}</p>
 

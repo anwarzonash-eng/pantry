@@ -72,3 +72,19 @@ export function getRecipe(db: Database.Database, id: number): Recipe | null {
 export function listRecipes(db: Database.Database): Recipe[] {
   return (db.prepare("SELECT * FROM recipes ORDER BY updated_at DESC").all() as Row[]).map(toRecipe);
 }
+
+export function updateRecipe(db: Database.Database, id: number, input: RecipeInput, now = Date.now()): Recipe | null {
+  db.prepare(
+    `UPDATE recipes SET title = ?, description = ?, servings = ?, ingredients = ?, steps = ?, updated_at = ?
+     WHERE id = ?`,
+  ).run(
+    input.title.trim(),
+    input.description?.trim() ?? "",
+    input.servings ?? 2,
+    input.ingredients.join("\n"),
+    input.steps.join("\n"),
+    now,
+    id,
+  );
+  return getRecipe(db, id);
+}
