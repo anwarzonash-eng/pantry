@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { getDb } from "@/lib/db";
-import { createRecipe, updateRecipe, type RecipeInput } from "@/lib/recipes";
+import { createRecipe, deleteRecipe, updateRecipe, type RecipeInput } from "@/lib/recipes";
 
 const lines = (value: FormDataEntryValue | null) =>
   String(value ?? "")
@@ -30,4 +30,9 @@ export async function saveNewRecipe(form: FormData) {
 export async function saveRecipe(id: number, form: FormData) {
   updateRecipe(getDb(), id, readForm(form));
   redirect(`/recipes/${id}`);
+}
+
+export async function removeRecipe(id: number) {
+  deleteRecipe(getDb(), id);
+  redirect("/");
 }

@@ -88,3 +88,7 @@ export function updateRecipe(db: Database.Database, id: number, input: RecipeInp
   );
   return getRecipe(db, id);
 }
+
+export function deleteRecipe(db: Database.Database, id: number): boolean {
+  return db.prepare("DELETE FROM recipes WHERE id = ?").run(id).changes > 0;
+}
