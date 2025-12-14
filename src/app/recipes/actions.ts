@@ -24,12 +24,12 @@ function readForm(form: FormData): RecipeInput {
 
 export async function saveNewRecipe(form: FormData) {
   const recipe = createRecipe(getDb(), readForm(form));
-  redirect(`/recipes/${recipe.id}`);
+  redirect(`/recipes/${recipe.slug}`);
 }
 
 export async function saveRecipe(id: number, form: FormData) {
-  updateRecipe(getDb(), id, readForm(form));
-  redirect(`/recipes/${id}`);
+  const recipe = updateRecipe(getDb(), id, readForm(form));
+  redirect(recipe ? `/recipes/${recipe.slug}` : "/");
 }
 
 export async function removeRecipe(id: number) {

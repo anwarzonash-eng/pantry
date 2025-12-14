@@ -1,21 +1,21 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getDb } from "@/lib/db";
-import { getRecipe } from "@/lib/recipes";
+import { getRecipeBySlug } from "@/lib/recipes";
 import { IngredientLine } from "@/components/IngredientLine";
 
 export const dynamic = "force-dynamic";
 
-export default async function RecipePage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  const recipe = getRecipe(getDb(), Number(id));
+export default async function RecipePage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const recipe = getRecipeBySlug(getDb(), slug);
   if (!recipe) notFound();
 
   return (
     <article className="recipe">
       <div className="page-head">
         <h1>{recipe.title}</h1>
-        <Link href={`/recipes/${recipe.id}/edit`}>Edit</Link>
+        <Link href={`/recipes/${recipe.slug}/edit`}>Edit</Link>
       </div>
       {recipe.description && <p className="lead">{recipe.description}</p>}
       <p className="muted">Serves {recipe.servings}</p>

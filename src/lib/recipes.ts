@@ -1,7 +1,9 @@
 import type Database from "better-sqlite3";
+import { uniqueSlug } from "./slug";
 
 export type Recipe = {
   id: number;
+  slug: string;
   title: string;
   description: string;
   servings: number;
@@ -22,6 +24,7 @@ export type RecipeInput = {
 
 type Row = {
   id: number;
+  slug: string;
   title: string;
   description: string;
   servings: number;
@@ -36,6 +39,7 @@ const lines = (text: string) => text.split("\n").map((l) => l.trim()).filter(Boo
 function toRecipe(row: Row): Recipe {
   return {
     id: row.id,
+    slug: row.slug,
     title: row.title,
     description: row.description,
     servings: row.servings,
@@ -49,10 +53,11 @@ function toRecipe(row: Row): Recipe {
 export function createRecipe(db: Database.Database, input: RecipeInput, now = Date.now()): Recipe {
   const { lastInsertRowid } = db
     .prepare(
-      `INSERT INTO recipes (title, description, servings, ingredients, steps, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO recipes (slug, title, description, servings, ingredients, steps, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
     )
     .run(
+      uniqueSlug((s) => db.prepare("SELECT 1 FROM recipes WHERE slug = ?").get(s) !== undefined, input.title),
       input.title.trim(),
       input.description?.trim() ?? "",
       input.servings ?? 2,
@@ -66,6 +71,12 @@ export function createRecipe(db: Database.Database, input: RecipeInput, now = Da
 
 export function getRecipe(db: Database.Database, id: number): Recipe | null {
   const row = db.prepare("SELECT * FROM recipes WHERE id = ?").get(id) as Row | undefined;
+  return row ? toRecipe(row) : null;
+}
+
+/** The slug stays the same when the title is edited, so links keep working. */
+export function getRecipeBySlug(db: Database.Database, slug: string): Recipe | null {
+  const row = db.prepare("SELECT * FROM recipes WHERE slug = ?").get(slug) as Row | undefined;
   return row ? toRecipe(row) : null;
 }
 

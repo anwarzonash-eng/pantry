@@ -18,7 +18,7 @@ export default function Home() {
         <ul className="recipe-list">
           {recipes.map((r) => (
             <li key={r.id}>
-              <Link href={`/recipes/${r.id}`}>{r.title}</Link>
+              <Link href={`/recipes/${r.slug}`}>{r.title}</Link>
               {r.description && <p className="muted">{r.description}</p>}
             </li>
           ))}
