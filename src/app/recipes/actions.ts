@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { getDb } from "@/lib/db";
-import { createRecipe, deleteRecipe, updateRecipe, type RecipeInput } from "@/lib/recipes";
+import { createRecipe, deleteRecipe, parseTags, updateRecipe, type RecipeInput } from "@/lib/recipes";
 
 const lines = (value: FormDataEntryValue | null) =>
   String(value ?? "")
@@ -19,6 +19,7 @@ function readForm(form: FormData): RecipeInput {
     servings: Number(form.get("servings")) || 2,
     ingredients: lines(form.get("ingredients")),
     steps: lines(form.get("steps")),
+    tags: parseTags(String(form.get("tags") ?? "")),
   };
 }
 

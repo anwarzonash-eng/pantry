@@ -1,0 +1,38 @@
+import Database from "better-sqlite3";
+import { describe, expect, it } from "vitest";
+import { migrate } from "./migrations";
+import { createRecipe, getRecipeBySlug, listTags, parseTags, updateRecipe } from "./recipes";
+
+function db() {
+  const d = new Database(":memory:");
+  migrate(d);
+  return d;
+}
+
+describe("recipes", () => {
+  it("creates with a unique slug that survives a rename", () => {
+    const d = db();
+    const a = createRecipe(d, { title: "Tomato Soup", ingredients: ["1 can tomatoes"], steps: ["Heat."] });
+    const b = createRecipe(d, { title: "Tomato soup", ingredients: [], steps: [] });
+    expect([a.slug, b.slug]).toEqual(["tomato-soup", "tomato-soup-2"]);
+    updateRecipe(d, a.id, { title: "Roasted Tomato Soup", ingredients: [], steps: [] });
+    expect(getRecipeBySlug(d, "tomato-soup")?.title).toBe("Roasted Tomato Soup");
+  });
+
+  it("tags", () => {
+    const d = db();
+    const r = createRecipe(d, { title: "Dal", ingredients: [], steps: [], tags: ["dinner", "Vegetarian"] });
+    createRecipe(d, { title: "Toast", ingredients: [], steps: [], tags: ["breakfast", "vegetarian"] });
+    expect(r.tags).toEqual(["dinner", "Vegetarian"]);
+    expect(listTags(d)).toEqual([
+      { name: "breakfast", count: 1 },
+      { name: "dinner", count: 1 },
+      { name: "Vegetarian", count: 2 },
+    ]);
+    expect(updateRecipe(d, r.id, { title: "Dal", ingredients: [], steps: [], tags: ["quick"] })?.tags).toEqual(["quick"]);
+  });
+
+  it("parseTags trims and drops duplicates", () => {
+    expect(parseTags("Dinner, quick , dinner,,")).toEqual(["Dinner", "quick"]);
+  });
+});

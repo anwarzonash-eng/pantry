@@ -28,6 +28,17 @@ const MIGRATIONS: Migration[] = [
     }
     db.exec("CREATE UNIQUE INDEX recipes_slug ON recipes (slug)");
   },
+
+  // 3: tags
+  `CREATE TABLE tags (
+    id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL UNIQUE COLLATE NOCASE
+  );
+  CREATE TABLE recipe_tags (
+    recipe_id INTEGER NOT NULL,
+    tag_id INTEGER NOT NULL,
+    PRIMARY KEY (recipe_id, tag_id)
+  );`,
 ];
 
 export function migrate(db: Database.Database): void {

@@ -17,6 +17,10 @@ export function RecipeForm({ action, recipe }: Props) {
         <input name="description" defaultValue={recipe?.description} />
       </label>
       <label>
+        Tags <span className="muted">(comma separated)</span>
+        <input name="tags" defaultValue={recipe?.tags.join(", ")} placeholder="dinner, quick, vegetarian" />
+      </label>
+      <label>
         Servings
         <input name="servings" type="number" min={1} defaultValue={recipe?.servings ?? 2} />
       </label>

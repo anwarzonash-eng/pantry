@@ -19,6 +19,15 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
       </div>
       {recipe.description && <p className="lead">{recipe.description}</p>}
       <p className="muted">Serves {recipe.servings}</p>
+      {recipe.tags.length > 0 && (
+        <p className="tags">
+          {recipe.tags.map((t) => (
+            <span key={t} className="tag">
+              {t}
+            </span>
+          ))}
+        </p>
+      )}
 
       <div className="recipe-body">
         <section>
