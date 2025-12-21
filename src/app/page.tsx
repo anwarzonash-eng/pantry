@@ -4,12 +4,12 @@ import { listRecipes, listTags } from "@/lib/recipes";
 
 export const dynamic = "force-dynamic";
 
-type Search = { tag?: string };
+type Search = { tag?: string; q?: string };
 
 export default async function Home({ searchParams }: { searchParams: Promise<Search> }) {
-  const { tag } = await searchParams;
+  const { tag, q } = await searchParams;
   const db = getDb();
-  const recipes = listRecipes(db, { tag });
+  const recipes = listRecipes(db, { tag, q });
   const tags = listTags(db);
 
   return (
@@ -20,6 +20,11 @@ export default async function Home({ searchParams }: { searchParams: Promise<Sea
           New recipe
         </Link>
       </div>
+
+      <form className="search" action="/">
+        <input name="q" type="search" placeholder="Search recipes or ingredients" defaultValue={q} />
+        {tag && <input type="hidden" name="tag" value={tag} />}
+      </form>
 
       {tags.length > 0 && (
         <p className="tags">
@@ -39,7 +44,9 @@ export default async function Home({ searchParams }: { searchParams: Promise<Sea
       )}
 
       {recipes.length === 0 ? (
-        <p className="muted">{tag ? `No recipes tagged “${tag}”.` : "No recipes yet."}</p>
+        <p className="muted">
+          {q ? `Nothing matches “${q}”.` : tag ? `No recipes tagged “${tag}”.` : "No recipes yet."}
+        </p>
       ) : (
         <ul className="recipe-list">
           {recipes.map((r) => (

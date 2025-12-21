@@ -91,7 +91,7 @@ export function getRecipeBySlug(db: Database.Database, slug: string): Recipe | n
   return row ? toRecipe(row) : null;
 }
 
-export type RecipeFilter = { tag?: string };
+export type RecipeFilter = { tag?: string; q?: string };
 
 export function listRecipes(db: Database.Database, filter: RecipeFilter = {}): Recipe[] {
   const where: string[] = [];
@@ -101,6 +101,12 @@ export function listRecipes(db: Database.Database, filter: RecipeFilter = {}): R
       "EXISTS (SELECT 1 FROM recipe_tags rt JOIN tags t ON t.id = rt.tag_id WHERE rt.recipe_id = r.id AND t.name = ?)",
     );
     params.push(filter.tag);
+  }
+  // every word has to appear in the title, description or ingredients
+  for (const word of (filter.q ?? "").split(/\s+/).filter(Boolean)) {
+    where.push("(r.title LIKE ? OR r.description LIKE ? OR r.ingredients LIKE ?)");
+    const like = `%${word.replace(/[%_]/g, "")}%`;
+    params.push(like, like, like);
   }
   const sql = `${SELECT} ${where.length ? `WHERE ${where.join(" AND ")}` : ""} ORDER BY r.updated_at DESC`;
   return (db.prepare(sql).all(...params) as Row[]).map(toRecipe);

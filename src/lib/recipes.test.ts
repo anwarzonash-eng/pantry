@@ -47,3 +47,16 @@ describe("listRecipes", () => {
     expect(listRecipes(d).length).toBe(2);
   });
 });
+
+describe("search", () => {
+  it("matches every word in title, description or ingredients", async () => {
+    const { listRecipes } = await import("./recipes");
+    const d = db();
+    createRecipe(d, { title: "Chickpea Curry", ingredients: ["1 can chickpeas", "1 tbsp curry powder"], steps: [] });
+    createRecipe(d, { title: "Hummus", ingredients: ["1 can chickpeas", "2 tbsp tahini"], steps: [] });
+    expect(listRecipes(d, { q: "chickpeas" }).length).toBe(2);
+    expect(listRecipes(d, { q: "chickpeas tahini" }).map((r) => r.title)).toEqual(["Hummus"]);
+    expect(listRecipes(d, { q: "curry" }).map((r) => r.title)).toEqual(["Chickpea Curry"]);
+    expect(listRecipes(d, { q: "100%" }).length).toBe(0);
+  });
+});
