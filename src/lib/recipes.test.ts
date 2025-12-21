@@ -36,3 +36,14 @@ describe("recipes", () => {
     expect(parseTags("Dinner, quick , dinner,,")).toEqual(["Dinner", "quick"]);
   });
 });
+
+describe("listRecipes", () => {
+  it("filters by tag, case-insensitively", async () => {
+    const { listRecipes } = await import("./recipes");
+    const d = db();
+    createRecipe(d, { title: "Dal", ingredients: [], steps: [], tags: ["dinner"] });
+    createRecipe(d, { title: "Toast", ingredients: [], steps: [], tags: ["breakfast"] });
+    expect(listRecipes(d, { tag: "DINNER" }).map((r) => r.title)).toEqual(["Dal"]);
+    expect(listRecipes(d).length).toBe(2);
+  });
+});

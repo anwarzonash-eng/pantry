@@ -22,9 +22,9 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
       {recipe.tags.length > 0 && (
         <p className="tags">
           {recipe.tags.map((t) => (
-            <span key={t} className="tag">
+            <Link key={t} href={`/?tag=${encodeURIComponent(t)}`} className="tag">
               {t}
-            </span>
+            </Link>
           ))}
         </p>
       )}

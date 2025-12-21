@@ -91,8 +91,19 @@ export function getRecipeBySlug(db: Database.Database, slug: string): Recipe | n
   return row ? toRecipe(row) : null;
 }
 
-export function listRecipes(db: Database.Database): Recipe[] {
-  return (db.prepare(`${SELECT} ORDER BY r.updated_at DESC`).all() as Row[]).map(toRecipe);
+export type RecipeFilter = { tag?: string };
+
+export function listRecipes(db: Database.Database, filter: RecipeFilter = {}): Recipe[] {
+  const where: string[] = [];
+  const params: unknown[] = [];
+  if (filter.tag) {
+    where.push(
+      "EXISTS (SELECT 1 FROM recipe_tags rt JOIN tags t ON t.id = rt.tag_id WHERE rt.recipe_id = r.id AND t.name = ?)",
+    );
+    params.push(filter.tag);
+  }
+  const sql = `${SELECT} ${where.length ? `WHERE ${where.join(" AND ")}` : ""} ORDER BY r.updated_at DESC`;
+  return (db.prepare(sql).all(...params) as Row[]).map(toRecipe);
 }
 
 export function updateRecipe(db: Database.Database, id: number, input: RecipeInput, now = Date.now()): Recipe | null {
