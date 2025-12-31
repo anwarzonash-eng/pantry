@@ -120,3 +120,14 @@ a.tag:hover, .tag.active { background: var(--accent); color: #fff; }
   border-radius: 8px;
   background: #fff;
 }
+
+.scaler { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.scaler button {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: #fff;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
