@@ -2,9 +2,8 @@
 
 import { useState } from "react";
 import { parseIngredient } from "@/lib/ingredients/parse";
+import { formatAmount } from "@/lib/ingredients/format";
 import { scaleIngredient } from "@/lib/ingredients/scale";
-
-const round = (n: number) => String(Math.round(n * 100) / 100);
 
 /** Ingredient list with a servings control that scales the amounts. */
 export function IngredientList({ lines, servings }: { lines: string[]; servings: number }) {
@@ -28,13 +27,9 @@ export function IngredientList({ lines, servings }: { lines: string[]; servings:
         {lines.map((line, i) => {
           const ing = scaleIngredient(parseIngredient(line), factor);
           if (ing.quantity === null) return <li key={i}>{line}</li>;
-          const amount = ing.quantityMax ? `${round(ing.quantity)}-${round(ing.quantityMax)}` : round(ing.quantity);
           return (
             <li key={i}>
-              <strong>
-                {amount}
-                {ing.unit ? ` ${ing.unit}` : ""}
-              </strong>{" "}
+              <strong>{formatAmount(ing)}</strong>{" "}
               {ing.name}
               {ing.note && <span className="muted">, {ing.note}</span>}
             </li>
