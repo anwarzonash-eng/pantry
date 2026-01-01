@@ -53,7 +53,12 @@ function normalize(line: string): string {
 const RANGE = /^(\d+(?:\.\d+)?)-(\d+(?:\.\d+)?)$/;
 
 export function parseIngredient(raw: string): Ingredient {
-  const tokens = normalize(raw.trim()).split(/\s+/);
+  // "1 (14 oz) can tomatoes": a size in brackets right after the amount is a note,
+  // the can is the unit. Brackets anywhere else stay part of the name.
+  const sized = raw.trim().match(/^([\d./½⅓⅔¼¾⅕⅛⅜⅝⅞-]+)\s*\(([^)]*)\)\s*(.*)$/);
+  const sizeNote = sized ? sized[2].trim() : "";
+  const line = sized ? `${sized[1]} ${sized[3]}` : raw.trim();
+  const tokens = normalize(line).split(/\s+/);
   let quantity: number | null = null;
   let quantityMax: number | null = null;
 
@@ -102,6 +107,7 @@ export function parseIngredient(raw: string): Ingredient {
   const rest = tokens.join(" ");
   const comma = rest.indexOf(",");
   const name = (comma === -1 ? rest : rest.slice(0, comma)).trim();
-  const note = comma === -1 ? "" : rest.slice(comma + 1).trim();
+  const after = comma === -1 ? "" : rest.slice(comma + 1).trim();
+  const note = [sizeNote, after].filter(Boolean).join(", ");
   return { raw, quantity, quantityMax, unit, name, note };
 }

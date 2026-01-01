@@ -60,3 +60,19 @@ describe("parseIngredient, more forms", () => {
     expect(p("2 cups of water").name).toBe("water");
   });
 });
+
+describe("parseIngredient, brackets", () => {
+  it("size in brackets becomes a note", () => {
+    expect(p("1 (14 oz) can chopped tomatoes")).toEqual({
+      quantity: 1,
+      unit: "can",
+      name: "chopped tomatoes",
+      note: "14 oz",
+    });
+    expect(p("2 (400 g) cans chickpeas, drained").note).toBe("400 g, drained");
+  });
+
+  it("brackets later in the line stay in the name", () => {
+    expect(p("1 cup stock (or water)").name).toBe("stock (or water)");
+  });
+});
