@@ -39,6 +39,14 @@ const MIGRATIONS: Migration[] = [
     tag_id INTEGER NOT NULL,
     PRIMARY KEY (recipe_id, tag_id)
   );`,
+
+  // 4: meal plan
+  `CREATE TABLE meal_plan (
+    id INTEGER PRIMARY KEY,
+    date TEXT NOT NULL,
+    slot TEXT NOT NULL CHECK (slot IN ('breakfast', 'lunch', 'dinner')),
+    recipe_id INTEGER NOT NULL
+  );`,
 ];
 
 export function migrate(db: Database.Database): void {
