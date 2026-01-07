@@ -131,3 +131,10 @@ a.tag:hover, .tag.active { background: var(--accent); color: #fff; }
   font-size: 1.1rem;
   cursor: pointer;
 }
+
+.week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+.day { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 8px; min-width: 0; }
+.day h2 { font-size: 0.95rem; margin: 0 0 8px; }
+.slot { border-top: 1px dashed var(--border); padding: 6px 0; min-height: 44px; }
+.slot-name { display: block; font-size: 0.7rem; text-transform: uppercase; color: var(--muted); letter-spacing: 0.04em; }
+.meal { display: block; font-size: 0.9rem; text-decoration: none; overflow-wrap: anywhere; }
