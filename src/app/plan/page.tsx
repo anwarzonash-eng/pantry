@@ -2,13 +2,19 @@ import Link from "next/link";
 import { getDb } from "@/lib/db";
 import { formatDay, startOfWeek, toISODate, weekDays } from "@/lib/dates";
 import { mealsBetween, SLOTS } from "@/lib/plan";
+import { listRecipes } from "@/lib/recipes";
+import { AddMeal } from "./AddMeal";
 
 export const dynamic = "force-dynamic";
 
 export default function PlanPage() {
   const monday = startOfWeek(toISODate(new Date()));
   const days = weekDays(monday);
-  const meals = mealsBetween(getDb(), days[0], days[6]);
+  const db = getDb();
+  const meals = mealsBetween(db, days[0], days[6]);
+  const recipes = listRecipes(db)
+    .map((r) => ({ id: r.id, title: r.title }))
+    .sort((a, b) => a.title.localeCompare(b.title));
 
   return (
     <section>
@@ -27,6 +33,7 @@ export default function PlanPage() {
                       {m.title}
                     </Link>
                   ))}
+                <AddMeal date={day} slot={slot} recipes={recipes} />
               </div>
             ))}
           </div>
