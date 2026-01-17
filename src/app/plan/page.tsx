@@ -4,6 +4,7 @@ import { formatDay, startOfWeek, toISODate, weekDays } from "@/lib/dates";
 import { mealsBetween, SLOTS } from "@/lib/plan";
 import { listRecipes } from "@/lib/recipes";
 import { AddMeal } from "./AddMeal";
+import { unplanMeal } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -29,9 +30,14 @@ export default function PlanPage() {
                 {meals
                   .filter((m) => m.date === day && m.slot === slot)
                   .map((m) => (
-                    <Link key={m.id} href={`/recipes/${m.slug}`} className="meal">
-                      {m.title}
-                    </Link>
+                    <div key={m.id} className="meal">
+                      <Link href={`/recipes/${m.slug}`}>{m.title}</Link>
+                      <form action={unplanMeal.bind(null, m.id)}>
+                        <button type="submit" className="remove" aria-label={`Remove ${m.title}`}>
+                          ×
+                        </button>
+                      </form>
+                    </div>
                   ))}
                 <AddMeal date={day} slot={slot} recipes={recipes} />
               </div>
