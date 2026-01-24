@@ -145,3 +145,7 @@ a.tag:hover, .tag.active { background: var(--accent); color: #fff; }
 .add-meal { display: flex; gap: 4px; margin-top: 4px; }
 .add-meal select { flex: 1; min-width: 0; font: inherit; font-size: 0.8rem; color: var(--muted); border: 0; background: transparent; }
 .add-meal button { font-size: 0.75rem; border: 1px solid var(--border); background: #fff; border-radius: 4px; cursor: pointer; }
+
+.week-nav { display: flex; gap: 14px; font-size: 0.9rem; }
+.week-nav a { text-decoration: none; }
+.day.today { border-color: var(--accent); }

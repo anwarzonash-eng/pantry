@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getDb } from "@/lib/db";
-import { formatDay, startOfWeek, toISODate, weekDays } from "@/lib/dates";
+import { addDays, formatDay, isISODate, startOfWeek, toISODate, weekDays } from "@/lib/dates";
 import { mealsBetween, SLOTS } from "@/lib/plan";
 import { listRecipes } from "@/lib/recipes";
 import { AddMeal } from "./AddMeal";
@@ -8,8 +8,10 @@ import { unplanMeal } from "./actions";
 
 export const dynamic = "force-dynamic";
 
-export default function PlanPage() {
-  const monday = startOfWeek(toISODate(new Date()));
+export default async function PlanPage({ searchParams }: { searchParams: Promise<{ week?: string }> }) {
+  const { week } = await searchParams;
+  const today = toISODate(new Date());
+  const monday = startOfWeek(isISODate(week) ? week : today);
   const days = weekDays(monday);
   const db = getDb();
   const meals = mealsBetween(db, days[0], days[6]);
@@ -19,10 +21,17 @@ export default function PlanPage() {
 
   return (
     <section>
-      <h1>Week of {formatDay(monday)}</h1>
+      <div className="page-head">
+        <h1>Week of {formatDay(monday)}</h1>
+        <nav className="week-nav">
+          <Link href={`/plan?week=${addDays(monday, -7)}`}>← Previous</Link>
+          <Link href="/plan">This week</Link>
+          <Link href={`/plan?week=${addDays(monday, 7)}`}>Next →</Link>
+        </nav>
+      </div>
       <div className="week">
         {days.map((day) => (
-          <div key={day} className="day">
+          <div key={day} className={`day ${day === today ? "today" : ""}`}>
             <h2>{formatDay(day)}</h2>
             {SLOTS.map((slot) => (
               <div key={slot} className="slot">
