@@ -25,7 +25,8 @@ export function addDays(iso: string, days: number): string {
 /** Monday of the week the date is in. */
 export function startOfWeek(iso: string): string {
   const day = parseISODate(iso).getDay(); // 0 = Sunday
-  return addDays(iso, 1 - day);
+  // Sunday belongs to the week that started six days earlier, not the next one
+  return addDays(iso, day === 0 ? -6 : 1 - day);
 }
 
 export function weekDays(monday: string): string[] {

@@ -14,6 +14,7 @@ describe("dates", () => {
   it("week starts on Monday", () => {
     expect(startOfWeek("2026-01-07")).toBe("2026-01-05"); // Wednesday
     expect(startOfWeek("2026-01-05")).toBe("2026-01-05");
+    expect(startOfWeek("2026-01-11")).toBe("2026-01-05"); // Sunday
     expect(weekDays("2026-01-05")).toHaveLength(7);
     expect(weekDays("2026-01-05")[6]).toBe("2026-01-11");
   });
