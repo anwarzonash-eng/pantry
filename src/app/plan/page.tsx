@@ -40,7 +40,10 @@ export default async function PlanPage({ searchParams }: { searchParams: Promise
                   .filter((m) => m.date === day && m.slot === slot)
                   .map((m) => (
                     <div key={m.id} className="meal">
-                      <Link href={`/recipes/${m.slug}`}>{m.title}</Link>
+                      <Link href={`/recipes/${m.slug}`}>
+                        {m.title}
+                        {m.servings && m.servings !== m.recipeServings && <span className="muted"> ×{m.servings}</span>}
+                      </Link>
                       <form action={unplanMeal.bind(null, m.id)}>
                         <button type="submit" className="remove" aria-label={`Remove ${m.title}`}>
                           ×

@@ -10,12 +10,18 @@ export type PlannedMeal = {
   recipeId: number;
   title: string;
   slug: string;
+  /** Servings to cook; null means what the recipe makes. */
+  servings: number | null;
+  recipeServings: number;
 };
 
-export function addToPlan(db: Database.Database, meal: { date: string; slot: Slot; recipeId: number }): number {
+export function addToPlan(
+  db: Database.Database,
+  meal: { date: string; slot: Slot; recipeId: number; servings?: number | null },
+): number {
   const { lastInsertRowid } = db
-    .prepare("INSERT INTO meal_plan (date, slot, recipe_id) VALUES (?, ?, ?)")
-    .run(meal.date, meal.slot, meal.recipeId);
+    .prepare("INSERT INTO meal_plan (date, slot, recipe_id, servings) VALUES (?, ?, ?, ?)")
+    .run(meal.date, meal.slot, meal.recipeId, meal.servings ?? null);
   return Number(lastInsertRowid);
 }
 
@@ -27,7 +33,8 @@ export function removeFromPlan(db: Database.Database, id: number): void {
 export function mealsBetween(db: Database.Database, from: string, to: string): PlannedMeal[] {
   const rows = db
     .prepare(
-      `SELECT m.id, m.date, m.slot, m.recipe_id AS recipeId, r.title, r.slug
+      `SELECT m.id, m.date, m.slot, m.recipe_id AS recipeId, r.title, r.slug,
+              m.servings, r.servings AS recipeServings
        FROM meal_plan m JOIN recipes r ON r.id = m.recipe_id
        WHERE m.date BETWEEN ? AND ?
        ORDER BY m.date, CASE m.slot WHEN 'breakfast' THEN 0 WHEN 'lunch' THEN 1 ELSE 2 END, m.id`,

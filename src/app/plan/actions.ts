@@ -9,8 +9,9 @@ export async function planMeal(form: FormData) {
   const date = String(form.get("date") ?? "");
   const slot = String(form.get("slot") ?? "") as Slot;
   const recipeId = Number(form.get("recipeId"));
+  const servings = Number(form.get("servings")) || null;
   if (!isISODate(date) || !SLOTS.includes(slot) || !recipeId) return;
-  addToPlan(getDb(), { date, slot, recipeId });
+  addToPlan(getDb(), { date, slot, recipeId, servings });
   revalidatePath("/plan");
 }
 

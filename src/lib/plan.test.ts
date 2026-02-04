@@ -18,5 +18,9 @@ describe("meal plan", () => {
     expect(week.map((m) => `${m.slot}:${m.title}`)).toEqual(["breakfast:Oats", "dinner:Soup"]);
     removeFromPlan(db, id);
     expect(mealsBetween(db, "2026-01-05", "2026-01-11")).toHaveLength(1);
+
+    addToPlan(db, { date: "2026-01-07", slot: "dinner", recipeId: soup.id, servings: 6 });
+    const dinner = mealsBetween(db, "2026-01-07", "2026-01-07")[0];
+    expect([dinner.servings, dinner.recipeServings]).toEqual([6, 2]);
   });
 });

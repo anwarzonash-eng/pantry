@@ -149,3 +149,4 @@ a.tag:hover, .tag.active { background: var(--accent); color: #fff; }
 .week-nav { display: flex; gap: 14px; font-size: 0.9rem; }
 .week-nav a { text-decoration: none; }
 .day.today { border-color: var(--accent); }
+.add-meal .servings { width: 34px; font-size: 0.75rem; border: 1px solid var(--border); border-radius: 4px; }

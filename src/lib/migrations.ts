@@ -47,6 +47,9 @@ const MIGRATIONS: Migration[] = [
     slot TEXT NOT NULL CHECK (slot IN ('breakfast', 'lunch', 'dinner')),
     recipe_id INTEGER NOT NULL
   );`,
+
+  // 5: cook a different amount than the recipe makes (null = as written)
+  `ALTER TABLE meal_plan ADD COLUMN servings INTEGER;`,
 ];
 
 export function migrate(db: Database.Database): void {

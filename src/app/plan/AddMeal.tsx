@@ -17,6 +17,7 @@ export function AddMeal({ date, slot, recipes }: Props) {
           </option>
         ))}
       </select>
+      <input name="servings" type="number" min={1} max={50} placeholder="×" aria-label="Servings" className="servings" />
       <button type="submit">Add</button>
     </form>
   );
