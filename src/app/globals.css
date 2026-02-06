@@ -150,3 +150,17 @@ a.tag:hover, .tag.active { background: var(--accent); color: #fff; }
 .week-nav a { text-decoration: none; }
 .day.today { border-color: var(--accent); }
 .add-meal .servings { width: 34px; font-size: 0.75rem; border: 1px solid var(--border); border-radius: 4px; }
+
+/* seven columns do not fit on a phone: stack the days, today first in view */
+@media (max-width: 860px) {
+  .week { grid-template-columns: 1fr; }
+  .day { display: grid; grid-template-columns: 90px repeat(3, 1fr); gap: 8px; align-items: start; }
+  .day h2 { grid-row: span 1; }
+  .slot { border-top: 0; border-left: 1px dashed var(--border); padding: 0 0 0 8px; }
+  .page-head { flex-wrap: wrap; }
+}
+
+@media (max-width: 560px) {
+  .day { grid-template-columns: 1fr; }
+  .slot { border-left: 0; border-top: 1px dashed var(--border); padding: 6px 0; }
+}
