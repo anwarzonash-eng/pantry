@@ -10,23 +10,7 @@ export type Ingredient = {
   note: string;
 };
 
-// spelling -> the unit we store
-const UNITS: Record<string, string> = {
-  cup: "cup", cups: "cup",
-  tablespoon: "tbsp", tablespoons: "tbsp", tbsp: "tbsp", tbs: "tbsp",
-  teaspoon: "tsp", teaspoons: "tsp", tsp: "tsp",
-  g: "g", gram: "g", grams: "g",
-  kg: "kg", kilogram: "kg", kilograms: "kg",
-  ml: "ml", milliliter: "ml", milliliters: "ml", millilitre: "ml", millilitres: "ml",
-  l: "l", liter: "l", liters: "l", litre: "l", litres: "l",
-  oz: "oz", ounce: "oz", ounces: "oz",
-  lb: "lb", lbs: "lb", pound: "lb", pounds: "lb",
-  clove: "clove", cloves: "clove",
-  can: "can", cans: "can",
-  pinch: "pinch", pinches: "pinch",
-  slice: "slice", slices: "slice",
-  bunch: "bunch", bunches: "bunch",
-};
+import { normalizeUnit } from "./units";
 
 const UNICODE_FRACTIONS: Record<string, number> = {
   "½": 1 / 2, "⅓": 1 / 3, "⅔": 2 / 3, "¼": 1 / 4, "¾": 3 / 4,
@@ -74,7 +58,7 @@ export function parseIngredient(raw: string): Ingredient {
   }
 
   const glued = tokens[0]?.match(GLUED);
-  if (glued && UNITS[glued[2].toLowerCase()]) {
+  if (glued && normalizeUnit(glued[2])) {
     tokens.splice(0, 1, glued[1], glued[2]);
   }
 
@@ -97,9 +81,9 @@ export function parseIngredient(raw: string): Ingredient {
   }
 
   let unit: string | null = null;
-  const maybeUnit = tokens[0]?.toLowerCase().replace(/\.$/, "");
-  if (quantity !== null && maybeUnit && UNITS[maybeUnit]) {
-    unit = UNITS[maybeUnit];
+  const maybeUnit = quantity !== null && tokens[0] ? normalizeUnit(tokens[0]) : null;
+  if (maybeUnit) {
+    unit = maybeUnit;
     tokens.shift();
     if (tokens[0]?.toLowerCase() === "of") tokens.shift();
   }
