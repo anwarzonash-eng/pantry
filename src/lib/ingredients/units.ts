@@ -27,3 +27,49 @@ const ALIASES: Record<string, string> = {
 export function normalizeUnit(word: string): string | null {
   return ALIASES[word.toLowerCase().replace(/\.$/, "")] ?? null;
 }
+
+export type Dimension = "volume" | "mass";
+export type UnitSystem = "metric" | "imperial";
+
+// US customary volumes; close enough for cooking
+const VOLUME_ML: Record<string, number> = {
+  ml: 1, cl: 10, dl: 100, l: 1000,
+  tsp: 4.929, tbsp: 14.787, cup: 236.6, pint: 473.2, quart: 946.4,
+};
+const MASS_G: Record<string, number> = { g: 1, kg: 1000, oz: 28.35, lb: 453.6 };
+
+export function dimension(unit: string | null): Dimension | null {
+  if (!unit) return null;
+  if (unit in VOLUME_ML) return "volume";
+  if (unit in MASS_G) return "mass";
+  return null;
+}
+
+/** Amount in ml or g, or null for units like "clove" that do not convert. */
+export function toBase(quantity: number, unit: string | null): { quantity: number; dimension: Dimension } | null {
+  const dim = dimension(unit);
+  if (!dim || !unit) return null;
+  const factor = dim === "volume" ? VOLUME_ML[unit] : MASS_G[unit];
+  return { quantity: quantity * factor, dimension: dim };
+}
+
+export function convert(quantity: number, from: string, to: string): number | null {
+  const a = toBase(quantity, from);
+  const b = toBase(1, to);
+  if (!a || !b || a.dimension !== b.dimension) return null;
+  return a.quantity / b.quantity;
+}
+
+/** Pick a readable unit for an amount in ml or g. */
+export function bestUnit(base: number, dim: Dimension, system: UnitSystem = "metric"): { quantity: number; unit: string } {
+  if (system === "metric") {
+    if (dim === "volume") return base >= 1000 ? { quantity: base / 1000, unit: "l" } : { quantity: base, unit: "ml" };
+    return base >= 1000 ? { quantity: base / 1000, unit: "kg" } : { quantity: base, unit: "g" };
+  }
+  if (dim === "volume") {
+    if (base < VOLUME_ML.tbsp) return { quantity: base / VOLUME_ML.tsp, unit: "tsp" };
+    if (base < VOLUME_ML.cup / 4) return { quantity: base / VOLUME_ML.tbsp, unit: "tbsp" };
+    return { quantity: base / VOLUME_ML.cup, unit: "cup" };
+  }
+  return base < MASS_G.lb ? { quantity: base / MASS_G.oz, unit: "oz" } : { quantity: base / MASS_G.lb, unit: "lb" };
+}
