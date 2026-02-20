@@ -164,3 +164,7 @@ a.tag:hover, .tag.active { background: var(--accent); color: #fff; }
   .day { grid-template-columns: 1fr; }
   .slot { border-left: 0; border-top: 1px dashed var(--border); padding: 6px 0; }
 }
+
+.shopping { list-style: none; padding: 0; }
+.shopping li { padding: 8px 0; border-bottom: 1px solid var(--border); }
+.shopping .muted { font-size: 0.85rem; }
