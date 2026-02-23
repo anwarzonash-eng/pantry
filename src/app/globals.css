@@ -166,5 +166,18 @@ a.tag:hover, .tag.active { background: var(--accent); color: #fff; }
 }
 
 .shopping { list-style: none; padding: 0; }
-.shopping li { padding: 8px 0; border-bottom: 1px solid var(--border); }
+.shopping li { display: flex; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); }
+.shopping li.checked > span { text-decoration: line-through; opacity: 0.55; }
+.check {
+  width: 22px;
+  height: 22px;
+  border: 1.5px solid var(--muted);
+  border-radius: 5px;
+  background: #fff;
+  color: var(--accent);
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+}
+.toolbar { display: flex; gap: 12px; align-items: center; margin: 12px 0; }
 .shopping .muted { font-size: 0.85rem; }

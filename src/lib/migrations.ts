@@ -50,6 +50,19 @@ const MIGRATIONS: Migration[] = [
 
   // 5: cook a different amount than the recipe makes (null = as written)
   `ALTER TABLE meal_plan ADD COLUMN servings INTEGER;`,
+
+  // 6: saved shopping lists, one per week
+  `CREATE TABLE shopping_items (
+    id INTEGER PRIMARY KEY,
+    week TEXT NOT NULL,
+    name TEXT NOT NULL,
+    quantity REAL,
+    unit TEXT,
+    recipes TEXT NOT NULL DEFAULT '',
+    checked INTEGER NOT NULL DEFAULT 0,
+    manual INTEGER NOT NULL DEFAULT 0
+  );
+  CREATE INDEX shopping_items_week ON shopping_items (week);`,
 ];
 
 export function migrate(db: Database.Database): void {
