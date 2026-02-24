@@ -43,3 +43,12 @@ export function saveGenerated(db: Database.Database, week: string, lines: Shoppi
 export function setChecked(db: Database.Database, id: number, checked: boolean): void {
   db.prepare("UPDATE shopping_items SET checked = ? WHERE id = ?").run(checked ? 1 : 0, id);
 }
+
+/** Something that is not in any recipe: "dish soap", "2 lemons". */
+export function addManualItem(db: Database.Database, week: string, name: string, quantity: number | null, unit: string | null): void {
+  db.prepare("INSERT INTO shopping_items (week, name, quantity, unit, manual) VALUES (?, ?, ?, ?, 1)").run(week, name, quantity, unit);
+}
+
+export function removeItem(db: Database.Database, id: number): void {
+  db.prepare("DELETE FROM shopping_items WHERE id = ?").run(id);
+}

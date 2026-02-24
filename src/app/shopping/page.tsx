@@ -3,7 +3,7 @@ import { getDb } from "@/lib/db";
 import { addDays, formatDay, isISODate, startOfWeek, toISODate } from "@/lib/dates";
 import { formatQuantity } from "@/lib/ingredients/format";
 import { listItems } from "@/lib/shopping/list";
-import { generateList, toggleItem } from "./actions";
+import { addItem, deleteItem, generateList, toggleItem } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -30,6 +30,11 @@ export default async function ShoppingPage({ searchParams }: { searchParams: Pro
         {items.length > 0 && <span className="muted">{left} left to buy</span>}
       </form>
 
+      <form action={addItem.bind(null, monday)} className="add-item">
+        <input name="item" placeholder="Add something else, e.g. 2 lemons or dish soap" aria-label="Add an item" />
+        <button type="submit">Add</button>
+      </form>
+
       {items.length === 0 ? (
         <p className="muted">
           No list yet. Plan some meals on the <Link href={`/plan?week=${monday}`}>week plan</Link>, then make the list.
@@ -50,6 +55,13 @@ export default async function ShoppingPage({ searchParams }: { searchParams: Pro
                 {item.name}
                 {item.recipes.length > 0 && <span className="muted"> · {item.recipes.join(", ")}</span>}
               </span>
+              {item.manual && (
+                <form action={deleteItem.bind(null, item.id)} className="push-right">
+                  <button type="submit" className="remove" aria-label={`Remove ${item.name}`}>
+                    ×
+                  </button>
+                </form>
+              )}
             </li>
           ))}
         </ul>
