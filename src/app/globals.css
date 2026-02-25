@@ -187,3 +187,5 @@ a.tag:hover, .tag.active { background: var(--accent); color: #fff; }
 .add-item button { font: inherit; border: 1px solid var(--border); background: #fff; border-radius: 6px; padding: 0 14px; cursor: pointer; }
 .push-right { margin-left: auto; }
 .remove { border: 0; background: none; color: var(--muted); cursor: pointer; font-size: 1.1rem; }
+
+.aisle h2 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin: 20px 0 0; }

@@ -2,7 +2,8 @@ import Link from "next/link";
 import { getDb } from "@/lib/db";
 import { addDays, formatDay, isISODate, startOfWeek, toISODate } from "@/lib/dates";
 import { formatQuantity } from "@/lib/ingredients/format";
-import { listItems } from "@/lib/shopping/list";
+import { groupByAisle } from "@/lib/shopping/aisles";
+import { listItems, type ShoppingItem } from "@/lib/shopping/list";
 import { addItem, deleteItem, generateList, toggleItem } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -40,6 +41,19 @@ export default async function ShoppingPage({ searchParams }: { searchParams: Pro
           No list yet. Plan some meals on the <Link href={`/plan?week=${monday}`}>week plan</Link>, then make the list.
         </p>
       ) : (
+        groupByAisle(items).map((group) => (
+          <div key={group.aisle} className="aisle">
+            <h2>{group.aisle}</h2>
+            <ItemList items={group.items} />
+          </div>
+        ))
+      )}
+    </section>
+  );
+}
+
+function ItemList({ items }: { items: ShoppingItem[] }) {
+  return (
         <ul className="shopping">
           {items.map((item) => (
             <li key={item.id} className={item.checked ? "checked" : ""}>
@@ -65,7 +79,5 @@ export default async function ShoppingPage({ searchParams }: { searchParams: Pro
             </li>
           ))}
         </ul>
-      )}
-    </section>
   );
 }
