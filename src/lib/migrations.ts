@@ -63,6 +63,13 @@ const MIGRATIONS: Migration[] = [
     manual INTEGER NOT NULL DEFAULT 0
   );
   CREATE INDEX shopping_items_week ON shopping_items (week);`,
+
+  // 7: things already at home
+  `CREATE TABLE pantry_items (
+    id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL UNIQUE COLLATE NOCASE,
+    added_at INTEGER NOT NULL
+  );`,
 ];
 
 export function migrate(db: Database.Database): void {
