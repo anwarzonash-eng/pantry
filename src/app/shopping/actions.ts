@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { getDb } from "@/lib/db";
+import { pantryMatcher } from "@/lib/pantry";
 import { isISODate } from "@/lib/dates";
 import { shoppingForWeek } from "@/lib/shopping/fromPlan";
 import { parseIngredient } from "@/lib/ingredients/parse";
@@ -10,7 +11,7 @@ import { addManualItem, removeItem, saveGenerated, setChecked } from "@/lib/shop
 export async function generateList(week: string) {
   if (!isISODate(week)) return;
   const db = getDb();
-  saveGenerated(db, week, shoppingForWeek(db, week));
+  saveGenerated(db, week, shoppingForWeek(db, week), pantryMatcher(db));
   revalidatePath("/shopping");
 }
 

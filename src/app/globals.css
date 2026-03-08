@@ -192,3 +192,6 @@ a.tag:hover, .tag.active { background: var(--accent); color: #fff; }
 
 .pantry { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
 .pantry li { display: flex; align-items: center; gap: 2px; padding: 4px 4px 4px 12px; border: 1px solid var(--border); border-radius: 999px; background: #fff; }
+
+.have { margin-top: 24px; color: var(--muted); }
+.have summary { cursor: pointer; }

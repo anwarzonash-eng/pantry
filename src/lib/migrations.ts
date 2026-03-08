@@ -70,6 +70,9 @@ const MIGRATIONS: Migration[] = [
     name TEXT NOT NULL UNIQUE COLLATE NOCASE,
     added_at INTEGER NOT NULL
   );`,
+
+  // 8: remember which generated items were skipped because they are in the pantry
+  `ALTER TABLE shopping_items ADD COLUMN in_pantry INTEGER NOT NULL DEFAULT 0;`,
 ];
 
 export function migrate(db: Database.Database): void {

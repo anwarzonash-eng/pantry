@@ -9,13 +9,26 @@ export type ShoppingItem = {
   recipes: string[];
   checked: boolean;
   manual: boolean;
+  /** Needed by the plan, but you already have it. */
+  inPantry: boolean;
 };
 
-type Row = Omit<ShoppingItem, "recipes" | "checked" | "manual"> & { recipes: string; checked: number; manual: number };
+type Row = Omit<ShoppingItem, "recipes" | "checked" | "manual" | "inPantry"> & {
+  recipes: string;
+  checked: number;
+  manual: number;
+  in_pantry: number;
+};
 
 export function listItems(db: Database.Database, week: string): ShoppingItem[] {
   return (db.prepare("SELECT * FROM shopping_items WHERE week = ? ORDER BY name COLLATE NOCASE").all(week) as Row[]).map(
-    (r) => ({ ...r, recipes: r.recipes ? r.recipes.split("\n") : [], checked: r.checked === 1, manual: r.manual === 1 }),
+    ({ in_pantry, ...r }) => ({
+      ...r,
+      recipes: r.recipes ? r.recipes.split("\n") : [],
+      checked: r.checked === 1,
+      manual: r.manual === 1,
+      inPantry: in_pantry === 1,
+    }),
   );
 }
 
@@ -23,7 +36,12 @@ export function listItems(db: Database.Database, week: string): ShoppingItem[] {
  * Replace the generated items of a week with a fresh list. Items you added by
  * hand stay, and anything already ticked off stays ticked.
  */
-export function saveGenerated(db: Database.Database, week: string, lines: ShoppingLine[]): void {
+export function saveGenerated(
+  db: Database.Database,
+  week: string,
+  lines: ShoppingLine[],
+  inPantry: (name: string) => boolean = () => false,
+): void {
   db.transaction(() => {
     const ticked = new Set(
       (db.prepare("SELECT name FROM shopping_items WHERE week = ? AND checked = 1 AND manual = 0").all(week) as { name: string }[]).map(
@@ -32,10 +50,11 @@ export function saveGenerated(db: Database.Database, week: string, lines: Shoppi
     );
     db.prepare("DELETE FROM shopping_items WHERE week = ? AND manual = 0").run(week);
     const insert = db.prepare(
-      "INSERT INTO shopping_items (week, name, quantity, unit, recipes, checked) VALUES (?, ?, ?, ?, ?, ?)",
+      "INSERT INTO shopping_items (week, name, quantity, unit, recipes, checked, in_pantry) VALUES (?, ?, ?, ?, ?, ?, ?)",
     );
     for (const l of lines) {
-      insert.run(week, l.name, l.quantity, l.unit, l.recipes.join("\n"), ticked.has(l.name.toLowerCase()) ? 1 : 0);
+      const have = inPantry(l.name);
+      insert.run(week, l.name, l.quantity, l.unit, l.recipes.join("\n"), ticked.has(l.name.toLowerCase()) ? 1 : 0, have ? 1 : 0);
     }
   })();
 }

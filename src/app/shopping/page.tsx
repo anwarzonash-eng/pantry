@@ -11,7 +11,9 @@ export const dynamic = "force-dynamic";
 export default async function ShoppingPage({ searchParams }: { searchParams: Promise<{ week?: string }> }) {
   const { week } = await searchParams;
   const monday = startOfWeek(isISODate(week) ? week : toISODate(new Date()));
-  const items = listItems(getDb(), monday);
+  const all = listItems(getDb(), monday);
+  const items = all.filter((i) => !i.inPantry);
+  const have = all.filter((i) => i.inPantry);
   const left = items.filter((i) => !i.checked).length;
 
   return (
@@ -47,6 +49,15 @@ export default async function ShoppingPage({ searchParams }: { searchParams: Pro
             <ItemList items={group.items} />
           </div>
         ))
+      )}
+
+      {have.length > 0 && (
+        <details className="have">
+          <summary>
+            {have.length} {have.length === 1 ? "thing" : "things"} you already have (<Link href="/pantry">pantry</Link>)
+          </summary>
+          <p className="muted">{have.map((i) => i.name).join(", ")}</p>
+        </details>
       )}
     </section>
   );

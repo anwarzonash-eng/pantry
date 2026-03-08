@@ -21,6 +21,15 @@ describe("saved shopping list", () => {
   });
 });
 
+describe("pantry", () => {
+  it("marks items you already have", () => {
+    const db = new Database(":memory:");
+    migrate(db);
+    saveGenerated(db, "2026-02-02", [line("onion"), line("salt", null)], (n) => n === "salt");
+    expect(listItems(db, "2026-02-02").map((i) => `${i.name}:${i.inPantry}`)).toEqual(["onion:false", "salt:true"]);
+  });
+});
+
 describe("manual items", () => {
   it("survive regenerating and can be removed", () => {
     const db = new Database(":memory:");

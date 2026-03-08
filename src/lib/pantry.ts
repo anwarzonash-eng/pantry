@@ -22,3 +22,9 @@ export function addToPantry(db: Database.Database, text: string, now = Date.now(
 export function removeFromPantry(db: Database.Database, id: number): void {
   db.prepare("DELETE FROM pantry_items WHERE id = ?").run(id);
 }
+
+/** Is this ingredient name in the pantry? */
+export function pantryMatcher(db: Database.Database): (name: string) => boolean {
+  const names = new Set(listPantry(db).map((i) => i.name.toLowerCase()));
+  return (name) => names.has(name.toLowerCase().trim());
+}
