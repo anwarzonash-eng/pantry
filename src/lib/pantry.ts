@@ -1,4 +1,5 @@
 import type Database from "better-sqlite3";
+import { normalizeName } from "./ingredients/names";
 
 export type PantryItem = { id: number; name: string; addedAt: number };
 
@@ -25,6 +26,7 @@ export function removeFromPantry(db: Database.Database, id: number): void {
 
 /** Is this ingredient name in the pantry? */
 export function pantryMatcher(db: Database.Database): (name: string) => boolean {
-  const names = new Set(listPantry(db).map((i) => i.name.toLowerCase()));
-  return (name) => names.has(name.toLowerCase().trim());
+  // "tomato" in the pantry covers "tomatoes" in a recipe
+  const names = new Set(listPantry(db).map((i) => normalizeName(i.name)));
+  return (name) => names.has(normalizeName(name));
 }

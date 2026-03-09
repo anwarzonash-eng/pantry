@@ -1,4 +1,5 @@
 import type { Ingredient } from "../ingredients/parse";
+import { normalizeName } from "../ingredients/names";
 import { bestUnit, toBase, type UnitSystem } from "../ingredients/units";
 
 export type ShoppingLine = {
@@ -12,7 +13,7 @@ export type ShoppingLine = {
 
 export type Needed = { recipe: string; ingredient: Ingredient; factor: number };
 
-const key = (name: string) => name.toLowerCase().replace(/\s+/g, " ").trim();
+const key = normalizeName;
 
 /**
  * Add up the ingredients of the planned meals. Amounts of the same thing are

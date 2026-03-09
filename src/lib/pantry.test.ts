@@ -1,7 +1,7 @@
 import Database from "better-sqlite3";
 import { describe, expect, it } from "vitest";
 import { migrate } from "./migrations";
-import { addToPantry, listPantry, removeFromPantry } from "./pantry";
+import { addToPantry, listPantry, pantryMatcher, removeFromPantry } from "./pantry";
 
 describe("pantry", () => {
   it("adds several at once, ignores duplicates in any case", () => {
@@ -13,5 +13,17 @@ describe("pantry", () => {
     expect(items.map((i) => i.name)).toEqual(["flour", "Olive oil", "rice", "salt"]);
     removeFromPantry(db, items[0].id);
     expect(listPantry(db)).toHaveLength(3);
+  });
+});
+
+describe("pantryMatcher", () => {
+  it("matches singular and plural", () => {
+    const db = new Database(":memory:");
+    migrate(db);
+    addToPantry(db, "tomato, Rolled oats");
+    const has = pantryMatcher(db);
+    expect(has("tomatoes")).toBe(true);
+    expect(has("rolled oat")).toBe(true);
+    expect(has("onions")).toBe(false);
   });
 });

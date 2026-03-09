@@ -37,3 +37,10 @@ describe("buildShoppingList", () => {
     expect(buildShoppingList([need("A", "250 ml milk")], "imperial").map(short)).toEqual(["1.06 cup milk"]);
   });
 });
+
+describe("names", () => {
+  it("adds up singular and plural spellings", () => {
+    const list = buildShoppingList([need("A", "2 tomatoes"), need("B", "1 tomato")]);
+    expect(list.map(short)).toEqual(["3 tomatoes"]);
+  });
+});
