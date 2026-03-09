@@ -15,7 +15,10 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
     <article className="recipe">
       <div className="page-head">
         <h1>{recipe.title}</h1>
-        <Link href={`/recipes/${recipe.slug}/edit`}>Edit</Link>
+        <span className="actions">
+          <a href={`/recipes/${recipe.slug}/markdown`}>Markdown</a>
+          <Link href={`/recipes/${recipe.slug}/edit`}>Edit</Link>
+        </span>
       </div>
       {recipe.description && <p className="lead">{recipe.description}</p>}
       <p className="muted">Serves {recipe.servings}</p>

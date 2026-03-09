@@ -195,3 +195,5 @@ a.tag:hover, .tag.active { background: var(--accent); color: #fff; }
 
 .have { margin-top: 24px; color: var(--muted); }
 .have summary { cursor: pointer; }
+
+.actions { display: flex; gap: 14px; font-size: 0.95rem; }
