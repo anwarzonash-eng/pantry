@@ -197,3 +197,5 @@ a.tag:hover, .tag.active { background: var(--accent); color: #fff; }
 .have summary { cursor: pointer; }
 
 .actions { display: flex; gap: 14px; font-size: 0.95rem; }
+
+.error { color: #b3261e; margin: 0; }
