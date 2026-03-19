@@ -199,3 +199,6 @@ a.tag:hover, .tag.active { background: var(--accent); color: #fff; }
 .actions { display: flex; gap: 14px; font-size: 0.95rem; }
 
 .error { color: #b3261e; margin: 0; }
+
+.recipe-form label.inline { display: flex; gap: 8px; align-items: center; font-weight: 400; }
+.ok { color: #2e7d32; margin: 0; }

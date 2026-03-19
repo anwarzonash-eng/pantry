@@ -1,4 +1,5 @@
 import { ImportForm } from "./ImportForm";
+import { RestoreForm } from "./RestoreForm";
 
 export default function ImportPage() {
   return (
@@ -14,6 +15,7 @@ export default function ImportPage() {
         </a>{" "}
         <span className="muted">All recipes, the meal plan and the pantry as one JSON file.</span>
       </p>
+      <RestoreForm />
     </section>
   );
 }
