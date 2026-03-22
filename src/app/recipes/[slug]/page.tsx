@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getDb } from "@/lib/db";
 import { getRecipeBySlug } from "@/lib/recipes";
 import { IngredientList } from "@/components/IngredientList";
+import { PrintButton } from "@/components/PrintButton";
 
 export const dynamic = "force-dynamic";
 
@@ -16,6 +17,7 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
       <div className="page-head">
         <h1>{recipe.title}</h1>
         <span className="actions">
+          <PrintButton />
           <a href={`/recipes/${recipe.slug}/markdown`}>Markdown</a>
           <Link href={`/recipes/${recipe.slug}/edit`}>Edit</Link>
         </span>
