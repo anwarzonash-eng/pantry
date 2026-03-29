@@ -46,6 +46,17 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
               <li key={i}>{step}</li>
             ))}
           </ol>
+          {recipe.notes && (
+            <>
+              <h2>Notes</h2>
+              <p className="notes">{recipe.notes}</p>
+            </>
+          )}
+          {recipe.sourceUrl && (
+            <p className="muted source">
+              From <a href={recipe.sourceUrl}>{new URL(recipe.sourceUrl).hostname.replace(/^www\./, "")}</a>
+            </p>
+          )}
         </section>
       </div>
     </article>

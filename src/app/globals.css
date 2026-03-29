@@ -216,3 +216,6 @@ a.tag:hover, .tag.active { background: var(--accent); color: #fff; }
   .scaler button { display: none; }
   a { color: inherit; text-decoration: none; }
 }
+
+.notes { white-space: pre-line; background: #fff8e8; border-left: 3px solid #e3b341; padding: 8px 12px; }
+.source { font-size: 0.9rem; }

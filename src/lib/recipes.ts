@@ -11,6 +11,8 @@ export type Recipe = {
   ingredients: string[];
   steps: string[];
   tags: string[];
+  notes: string;
+  sourceUrl: string;
   createdAt: number;
   updatedAt: number;
 };
@@ -22,6 +24,8 @@ export type RecipeInput = {
   ingredients: string[];
   steps: string[];
   tags?: string[];
+  notes?: string;
+  sourceUrl?: string;
 };
 
 type Row = {
@@ -35,6 +39,8 @@ type Row = {
   created_at: number;
   updated_at: number;
   tags: string | null;
+  notes: string;
+  source_url: string;
 };
 
 // recipes with their tags as "a,b,c"
@@ -55,6 +61,8 @@ function toRecipe(row: Row): Recipe {
     ingredients: lines(row.ingredients),
     steps: lines(row.steps),
     tags: row.tags ? row.tags.split(",").sort((a, b) => a.localeCompare(b)) : [],
+    notes: row.notes,
+    sourceUrl: row.source_url,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
@@ -77,6 +85,7 @@ export function createRecipe(db: Database.Database, input: RecipeInput, now = Da
       now,
     );
   setTags(db, Number(lastInsertRowid), input.tags ?? []);
+  saveDetails(db, Number(lastInsertRowid), input);
   return getRecipe(db, Number(lastInsertRowid))!;
 }
 
@@ -126,7 +135,27 @@ export function updateRecipe(db: Database.Database, id: number, input: RecipeInp
     id,
   );
   if (input.tags) setTags(db, id, input.tags);
+  saveDetails(db, id, input);
   return getRecipe(db, id);
+}
+
+/** Optional fields, kept apart so the main insert stays readable. */
+function saveDetails(db: Database.Database, id: number, input: RecipeInput): void {
+  db.prepare("UPDATE recipes SET notes = ?, source_url = ? WHERE id = ?").run(
+    input.notes?.trim() ?? "",
+    cleanUrl(input.sourceUrl),
+    id,
+  );
+}
+
+/** Only keep http(s) links, so nothing odd ends up in an href. */
+export function cleanUrl(text: string | undefined): string {
+  const value = text?.trim() ?? "";
+  try {
+    return ["http:", "https:"].includes(new URL(value).protocol) ? value : "";
+  } catch {
+    return "";
+  }
 }
 
 export function deleteRecipe(db: Database.Database, id: number): boolean {

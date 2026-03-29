@@ -20,6 +20,8 @@ function readForm(form: FormData): RecipeInput {
     ingredients: lines(form.get("ingredients")),
     steps: lines(form.get("steps")),
     tags: parseTags(String(form.get("tags") ?? "")),
+    notes: String(form.get("notes") ?? ""),
+    sourceUrl: String(form.get("sourceUrl") ?? ""),
   };
 }
 

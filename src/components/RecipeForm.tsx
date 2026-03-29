@@ -37,6 +37,14 @@ export function RecipeForm({ action, recipe }: Props) {
         Steps <span className="muted">(one per line)</span>
         <textarea name="steps" rows={10} defaultValue={recipe?.steps.join("\n")} />
       </label>
+      <label>
+        Notes <span className="muted">(substitutions, what to change next time)</span>
+        <textarea name="notes" rows={3} defaultValue={recipe?.notes} />
+      </label>
+      <label>
+        Source <span className="muted">(link to where the recipe came from)</span>
+        <input name="sourceUrl" type="url" defaultValue={recipe?.sourceUrl} placeholder="https://" />
+      </label>
       <button className="button" type="submit">
         Save
       </button>

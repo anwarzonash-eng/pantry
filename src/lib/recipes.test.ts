@@ -60,3 +60,20 @@ describe("search", () => {
     expect(listRecipes(d, { q: "100%" }).length).toBe(0);
   });
 });
+
+describe("details", () => {
+  it("notes and source links", async () => {
+    const { cleanUrl } = await import("./recipes");
+    const d = db();
+    const r = createRecipe(d, {
+      title: "Bread",
+      ingredients: [],
+      steps: [],
+      notes: " Less salt next time ",
+      sourceUrl: "https://example.com/bread",
+    });
+    expect([r.notes, r.sourceUrl]).toEqual(["Less salt next time", "https://example.com/bread"]);
+    expect(cleanUrl("javascript:alert(1)")).toBe("");
+    expect(cleanUrl("not a url")).toBe("");
+  });
+});

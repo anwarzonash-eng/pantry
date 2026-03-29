@@ -73,6 +73,10 @@ const MIGRATIONS: Migration[] = [
 
   // 8: remember which generated items were skipped because they are in the pantry
   `ALTER TABLE shopping_items ADD COLUMN in_pantry INTEGER NOT NULL DEFAULT 0;`,
+
+  // 9: where a recipe came from, and notes for next time
+  `ALTER TABLE recipes ADD COLUMN notes TEXT NOT NULL DEFAULT '';
+   ALTER TABLE recipes ADD COLUMN source_url TEXT NOT NULL DEFAULT '';`,
 ];
 
 export function migrate(db: Database.Database): void {
