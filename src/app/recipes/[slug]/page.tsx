@@ -4,6 +4,7 @@ import { getDb } from "@/lib/db";
 import { getRecipeBySlug } from "@/lib/recipes";
 import { IngredientList } from "@/components/IngredientList";
 import { PrintButton } from "@/components/PrintButton";
+import { formatMinutes, totalMinutes } from "@/lib/time";
 
 export const dynamic = "force-dynamic";
 
@@ -11,6 +12,7 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
   const { slug } = await params;
   const recipe = getRecipeBySlug(getDb(), slug);
   if (!recipe) notFound();
+  const total = totalMinutes(recipe);
 
   return (
     <article className="recipe">
@@ -23,7 +25,12 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
         </span>
       </div>
       {recipe.description && <p className="lead">{recipe.description}</p>}
-      <p className="muted">Serves {recipe.servings}</p>
+      <p className="muted meta">
+        <span>Serves {recipe.servings}</span>
+        {recipe.prepMinutes && <span>Prep {formatMinutes(recipe.prepMinutes)}</span>}
+        {recipe.cookMinutes && <span>Cook {formatMinutes(recipe.cookMinutes)}</span>}
+        {total && recipe.prepMinutes && recipe.cookMinutes && <span>Total {formatMinutes(total)}</span>}
+      </p>
       {recipe.tags.length > 0 && (
         <p className="tags">
           {recipe.tags.map((t) => (

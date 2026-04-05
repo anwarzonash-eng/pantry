@@ -219,3 +219,6 @@ a.tag:hover, .tag.active { background: var(--accent); color: #fff; }
 
 .notes { white-space: pre-line; background: #fff8e8; border-left: 3px solid #e3b341; padding: 8px 12px; }
 .source { font-size: 0.9rem; }
+
+.meta { display: flex; flex-wrap: wrap; gap: 6px 16px; }
+.form-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }

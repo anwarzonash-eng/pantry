@@ -20,10 +20,20 @@ export function RecipeForm({ action, recipe }: Props) {
         Tags <span className="muted">(comma separated)</span>
         <input name="tags" defaultValue={recipe?.tags.join(", ")} placeholder="dinner, quick, vegetarian" />
       </label>
-      <label>
-        Servings
-        <input name="servings" type="number" min={1} defaultValue={recipe?.servings ?? 2} />
-      </label>
+      <div className="form-row">
+        <label>
+          Servings
+          <input name="servings" type="number" min={1} defaultValue={recipe?.servings ?? 2} />
+        </label>
+        <label>
+          Prep (min)
+          <input name="prepMinutes" type="number" min={0} defaultValue={recipe?.prepMinutes ?? ""} />
+        </label>
+        <label>
+          Cook (min)
+          <input name="cookMinutes" type="number" min={0} defaultValue={recipe?.cookMinutes ?? ""} />
+        </label>
+      </div>
       <label>
         Ingredients <span className="muted">(one per line)</span>
         <textarea

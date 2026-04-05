@@ -22,6 +22,8 @@ function readForm(form: FormData): RecipeInput {
     tags: parseTags(String(form.get("tags") ?? "")),
     notes: String(form.get("notes") ?? ""),
     sourceUrl: String(form.get("sourceUrl") ?? ""),
+    prepMinutes: Number(form.get("prepMinutes")) || null,
+    cookMinutes: Number(form.get("cookMinutes")) || null,
   };
 }
 

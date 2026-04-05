@@ -13,6 +13,8 @@ export type Recipe = {
   tags: string[];
   notes: string;
   sourceUrl: string;
+  prepMinutes: number | null;
+  cookMinutes: number | null;
   createdAt: number;
   updatedAt: number;
 };
@@ -26,6 +28,8 @@ export type RecipeInput = {
   tags?: string[];
   notes?: string;
   sourceUrl?: string;
+  prepMinutes?: number | null;
+  cookMinutes?: number | null;
 };
 
 type Row = {
@@ -41,6 +45,8 @@ type Row = {
   tags: string | null;
   notes: string;
   source_url: string;
+  prep_minutes: number | null;
+  cook_minutes: number | null;
 };
 
 // recipes with their tags as "a,b,c"
@@ -63,6 +69,8 @@ function toRecipe(row: Row): Recipe {
     tags: row.tags ? row.tags.split(",").sort((a, b) => a.localeCompare(b)) : [],
     notes: row.notes,
     sourceUrl: row.source_url,
+    prepMinutes: row.prep_minutes,
+    cookMinutes: row.cook_minutes,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
@@ -141,9 +149,12 @@ export function updateRecipe(db: Database.Database, id: number, input: RecipeInp
 
 /** Optional fields, kept apart so the main insert stays readable. */
 function saveDetails(db: Database.Database, id: number, input: RecipeInput): void {
-  db.prepare("UPDATE recipes SET notes = ?, source_url = ? WHERE id = ?").run(
+  const minutes = (n: number | null | undefined) => (n && n > 0 ? Math.round(n) : null);
+  db.prepare("UPDATE recipes SET notes = ?, source_url = ?, prep_minutes = ?, cook_minutes = ? WHERE id = ?").run(
     input.notes?.trim() ?? "",
     cleanUrl(input.sourceUrl),
+    minutes(input.prepMinutes),
+    minutes(input.cookMinutes),
     id,
   );
 }

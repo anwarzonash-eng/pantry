@@ -77,6 +77,10 @@ const MIGRATIONS: Migration[] = [
   // 9: where a recipe came from, and notes for next time
   `ALTER TABLE recipes ADD COLUMN notes TEXT NOT NULL DEFAULT '';
    ALTER TABLE recipes ADD COLUMN source_url TEXT NOT NULL DEFAULT '';`,
+
+  // 10: how long it takes
+  `ALTER TABLE recipes ADD COLUMN prep_minutes INTEGER;
+   ALTER TABLE recipes ADD COLUMN cook_minutes INTEGER;`,
 ];
 
 export function migrate(db: Database.Database): void {
