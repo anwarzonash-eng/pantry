@@ -111,9 +111,11 @@ h2 { font-size: 1.2rem; }
 a.tag:hover, .tag.active { background: var(--accent); color: #fff; }
 .tag .count { opacity: 0.7; font-size: 0.75rem; }
 
-.search { margin: 12px 0; }
+.search { margin: 12px 0; display: flex; gap: 8px; }
+.search select, .search button { font: inherit; border: 1px solid var(--border); border-radius: 8px; background: #fff; padding: 0 10px; }
 .search input {
-  width: 100%;
+  flex: 1;
+  min-width: 0;
   font: inherit;
   padding: 10px 12px;
   border: 1px solid var(--border);

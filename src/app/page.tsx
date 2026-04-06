@@ -1,15 +1,19 @@
 import Link from "next/link";
 import { getDb } from "@/lib/db";
-import { listRecipes, listTags } from "@/lib/recipes";
+import { listRecipes, listTags, SORTS, type Sort } from "@/lib/recipes";
+import { formatMinutes, totalMinutes } from "@/lib/time";
 
 export const dynamic = "force-dynamic";
 
-type Search = { tag?: string; q?: string };
+type Search = { tag?: string; q?: string; sort?: string };
+
+const SORT_LABELS: Record<Sort, string> = { recent: "Recently changed", title: "A–Z", quick: "Quickest" };
 
 export default async function Home({ searchParams }: { searchParams: Promise<Search> }) {
-  const { tag, q } = await searchParams;
+  const { tag, q, sort: sortParam } = await searchParams;
+  const sort = (sortParam && sortParam in SORTS ? sortParam : "recent") as Sort;
   const db = getDb();
-  const recipes = listRecipes(db, { tag, q });
+  const recipes = listRecipes(db, { tag, q, sort });
   const tags = listTags(db);
 
   return (
@@ -24,6 +28,14 @@ export default async function Home({ searchParams }: { searchParams: Promise<Sea
       <form className="search" action="/">
         <input name="q" type="search" placeholder="Search recipes or ingredients" defaultValue={q} />
         {tag && <input type="hidden" name="tag" value={tag} />}
+        <select name="sort" defaultValue={sort} aria-label="Sort">
+          {(Object.keys(SORT_LABELS) as Sort[]).map((s) => (
+            <option key={s} value={s}>
+              {SORT_LABELS[s]}
+            </option>
+          ))}
+        </select>
+        <button type="submit">Go</button>
       </form>
 
       {tags.length > 0 && (
@@ -52,6 +64,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<Sea
           {recipes.map((r) => (
             <li key={r.id}>
               <Link href={`/recipes/${r.slug}`}>{r.title}</Link>
+              {totalMinutes(r) && <span className="muted time"> · {formatMinutes(totalMinutes(r)!)}</span>}
               {r.description && <p className="muted">{r.description}</p>}
             </li>
           ))}

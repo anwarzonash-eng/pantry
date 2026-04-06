@@ -77,3 +77,16 @@ describe("details", () => {
     expect(cleanUrl("not a url")).toBe("");
   });
 });
+
+describe("sorting", () => {
+  it("by title and by total time", async () => {
+    const { listRecipes } = await import("./recipes");
+    const d = db();
+    createRecipe(d, { title: "b slow", ingredients: [], steps: [], prepMinutes: 30, cookMinutes: 60 }, 1);
+    createRecipe(d, { title: "A quick", ingredients: [], steps: [], cookMinutes: 10 }, 2);
+    createRecipe(d, { title: "c untimed", ingredients: [], steps: [] }, 3);
+    expect(listRecipes(d).map((r) => r.title)).toEqual(["c untimed", "A quick", "b slow"]);
+    expect(listRecipes(d, { sort: "title" }).map((r) => r.title)).toEqual(["A quick", "b slow", "c untimed"]);
+    expect(listRecipes(d, { sort: "quick" }).map((r) => r.title)).toEqual(["A quick", "b slow", "c untimed"]);
+  });
+});

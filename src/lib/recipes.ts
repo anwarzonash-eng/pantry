@@ -108,7 +108,14 @@ export function getRecipeBySlug(db: Database.Database, slug: string): Recipe | n
   return row ? toRecipe(row) : null;
 }
 
-export type RecipeFilter = { tag?: string; q?: string };
+export const SORTS = {
+  recent: "r.updated_at DESC",
+  title: "r.title COLLATE NOCASE",
+  quick: "COALESCE(r.prep_minutes, 0) + COALESCE(r.cook_minutes, 0) = 0, COALESCE(r.prep_minutes, 0) + COALESCE(r.cook_minutes, 0), r.title COLLATE NOCASE",
+} as const;
+export type Sort = keyof typeof SORTS;
+
+export type RecipeFilter = { tag?: string; q?: string; sort?: Sort };
 
 export function listRecipes(db: Database.Database, filter: RecipeFilter = {}): Recipe[] {
   const where: string[] = [];
@@ -125,7 +132,8 @@ export function listRecipes(db: Database.Database, filter: RecipeFilter = {}): R
     const like = `%${word.replace(/[%_]/g, "")}%`;
     params.push(like, like, like);
   }
-  const sql = `${SELECT} ${where.length ? `WHERE ${where.join(" AND ")}` : ""} ORDER BY r.updated_at DESC`;
+  const order = SORTS[filter.sort ?? "recent"] ?? SORTS.recent;
+  const sql = `${SELECT} ${where.length ? `WHERE ${where.join(" AND ")}` : ""} ORDER BY ${order}`;
   return (db.prepare(sql).all(...params) as Row[]).map(toRecipe);
 }
 
