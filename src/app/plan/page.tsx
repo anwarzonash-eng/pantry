@@ -29,6 +29,14 @@ export default async function PlanPage({ searchParams }: { searchParams: Promise
           <Link href={`/plan?week=${addDays(monday, 7)}`}>Next →</Link>
         </nav>
       </div>
+      {recipes.length === 0 && (
+        <p className="empty">
+          Add a few <Link href="/recipes/new">recipes</Link> first, then plan them here.
+        </p>
+      )}
+      {recipes.length > 0 && meals.length === 0 && (
+        <p className="muted">Nothing planned this week yet. Pick recipes from the lists below.</p>
+      )}
       <div className="week">
         {days.map((day) => (
           <div key={day} className={`day ${day === today ? "today" : ""}`}>

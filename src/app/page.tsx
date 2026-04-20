@@ -55,10 +55,22 @@ export default async function Home({ searchParams }: { searchParams: Promise<Sea
         </p>
       )}
 
-      {recipes.length === 0 ? (
-        <p className="muted">
-          {q ? `Nothing matches “${q}”.` : tag ? `No recipes tagged “${tag}”.` : "No recipes yet."}
-        </p>
+      {recipes.length === 0 && !q && !tag ? (
+        <div className="empty">
+          <h2>Your recipe box is empty</h2>
+          <p>Start by typing in a recipe you cook often, or paste one in Markdown.</p>
+          <p>
+            <Link href="/recipes/new" className="button">
+              Add a recipe
+            </Link>{" "}
+            <Link href="/import">Import</Link>
+          </p>
+          <p className="muted">
+            Trying it out? <code>npm run seed</code> adds a few sample recipes.
+          </p>
+        </div>
+      ) : recipes.length === 0 ? (
+        <p className="muted">{q ? `Nothing matches “${q}”.` : `No recipes tagged “${tag}”.`}</p>
       ) : (
         <ul className="recipe-list">
           {recipes.map((r) => (
