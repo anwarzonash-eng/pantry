@@ -48,8 +48,17 @@ a { color: var(--accent); }
   gap: 20px;
   align-items: center;
 }
-.nav a { text-decoration: none; color: var(--muted); }
-.nav a:hover { color: var(--text); }
+.nav a { text-decoration: none; color: var(--muted); white-space: nowrap; }
+.nav a:hover, .nav a[aria-current="page"] { color: var(--text); }
+.nav-links { display: flex; gap: 20px; }
+.nav a[aria-current="page"] { font-weight: 600; }
+
+/* on a phone the links scroll sideways instead of wrapping into a second row */
+@media (max-width: 600px) {
+  .nav { flex-wrap: wrap; gap: 8px; }
+  .nav .logo { width: 100%; }
+  .nav-links { overflow-x: auto; gap: 16px; padding-bottom: 4px; width: 100%; }
+}
 
 .nav .logo {
   font-weight: 700;
