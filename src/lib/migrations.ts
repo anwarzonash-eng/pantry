@@ -81,6 +81,9 @@ const MIGRATIONS: Migration[] = [
   // 10: how long it takes
   `ALTER TABLE recipes ADD COLUMN prep_minutes INTEGER;
    ALTER TABLE recipes ADD COLUMN cook_minutes INTEGER;`,
+
+  // 11: favourites
+  `ALTER TABLE recipes ADD COLUMN favorite INTEGER NOT NULL DEFAULT 0;`,
 ];
 
 export function migrate(db: Database.Database): void {

@@ -255,3 +255,7 @@ a.tag:hover, .tag.active { background: var(--accent); color: #fff; }
 .empty { background: var(--surface); border: 1px dashed var(--border); border-radius: 10px; padding: 20px 24px; margin: 16px 0; }
 .empty h2 { margin-top: 0; }
 code { background: var(--chip); padding: 1px 6px; border-radius: 4px; font-size: 0.9em; }
+
+.fav-form { display: inline; }
+.fav { border: 0; background: none; font-size: 1.5rem; color: var(--muted); cursor: pointer; padding: 0 6px 0 0; vertical-align: 2px; }
+.fav.on, .star { color: #e0a800; }

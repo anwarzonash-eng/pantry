@@ -15,6 +15,7 @@ export type Recipe = {
   sourceUrl: string;
   prepMinutes: number | null;
   cookMinutes: number | null;
+  favorite: boolean;
   createdAt: number;
   updatedAt: number;
 };
@@ -47,6 +48,7 @@ type Row = {
   source_url: string;
   prep_minutes: number | null;
   cook_minutes: number | null;
+  favorite: number;
 };
 
 // recipes with their tags as "a,b,c"
@@ -71,6 +73,7 @@ function toRecipe(row: Row): Recipe {
     sourceUrl: row.source_url,
     prepMinutes: row.prep_minutes,
     cookMinutes: row.cook_minutes,
+    favorite: row.favorite === 1,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
@@ -115,7 +118,7 @@ export const SORTS = {
 } as const;
 export type Sort = keyof typeof SORTS;
 
-export type RecipeFilter = { tag?: string; q?: string; sort?: Sort };
+export type RecipeFilter = { tag?: string; q?: string; sort?: Sort; favorites?: boolean };
 
 export function listRecipes(db: Database.Database, filter: RecipeFilter = {}): Recipe[] {
   const where: string[] = [];
@@ -126,6 +129,7 @@ export function listRecipes(db: Database.Database, filter: RecipeFilter = {}): R
     );
     params.push(filter.tag);
   }
+  if (filter.favorites) where.push("r.favorite = 1");
   // every word has to appear in the title, description or ingredients
   for (const word of (filter.q ?? "").split(/\s+/).filter(Boolean)) {
     where.push("(r.title LIKE ? OR r.description LIKE ? OR r.ingredients LIKE ?)");
@@ -175,6 +179,10 @@ export function cleanUrl(text: string | undefined): string {
   } catch {
     return "";
   }
+}
+
+export function setFavorite(db: Database.Database, id: number, favorite: boolean): void {
+  db.prepare("UPDATE recipes SET favorite = ? WHERE id = ?").run(favorite ? 1 : 0, id);
 }
 
 export function deleteRecipe(db: Database.Database, id: number): boolean {

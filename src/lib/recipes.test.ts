@@ -90,3 +90,16 @@ describe("sorting", () => {
     expect(listRecipes(d, { sort: "quick" }).map((r) => r.title)).toEqual(["A quick", "b slow", "c untimed"]);
   });
 });
+
+describe("favourites", () => {
+  it("toggle and filter", async () => {
+    const { listRecipes, setFavorite } = await import("./recipes");
+    const d = db();
+    const a = createRecipe(d, { title: "A", ingredients: [], steps: [] });
+    createRecipe(d, { title: "B", ingredients: [], steps: [] });
+    setFavorite(d, a.id, true);
+    expect(listRecipes(d, { favorites: true }).map((r) => r.title)).toEqual(["A"]);
+    setFavorite(d, a.id, false);
+    expect(listRecipes(d, { favorites: true })).toEqual([]);
+  });
+});

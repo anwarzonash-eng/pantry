@@ -5,15 +5,16 @@ import { formatMinutes, totalMinutes } from "@/lib/time";
 
 export const dynamic = "force-dynamic";
 
-type Search = { tag?: string; q?: string; sort?: string };
+type Search = { tag?: string; q?: string; sort?: string; fav?: string };
 
 const SORT_LABELS: Record<Sort, string> = { recent: "Recently changed", title: "A–Z", quick: "Quickest" };
 
 export default async function Home({ searchParams }: { searchParams: Promise<Search> }) {
-  const { tag, q, sort: sortParam } = await searchParams;
+  const { tag, q, sort: sortParam, fav } = await searchParams;
+  const favorites = fav === "1";
   const sort = (sortParam && sortParam in SORTS ? sortParam : "recent") as Sort;
   const db = getDb();
-  const recipes = listRecipes(db, { tag, q, sort });
+  const recipes = listRecipes(db, { tag, q, sort, favorites });
   const tags = listTags(db);
 
   return (
@@ -40,8 +41,11 @@ export default async function Home({ searchParams }: { searchParams: Promise<Sea
 
       {tags.length > 0 && (
         <p className="tags">
-          <Link href="/" className={`tag ${tag ? "" : "active"}`}>
+          <Link href="/" className={`tag ${tag || favorites ? "" : "active"}`}>
             all
+          </Link>
+          <Link href="/?fav=1" className={`tag ${favorites ? "active" : ""}`}>
+            ★ favourites
           </Link>
           {tags.map((t) => (
             <Link
@@ -55,7 +59,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<Sea
         </p>
       )}
 
-      {recipes.length === 0 && !q && !tag ? (
+      {recipes.length === 0 && !q && !tag && !favorites ? (
         <div className="empty">
           <h2>Your recipe box is empty</h2>
           <p>Start by typing in a recipe you cook often, or paste one in Markdown.</p>
@@ -70,12 +74,17 @@ export default async function Home({ searchParams }: { searchParams: Promise<Sea
           </p>
         </div>
       ) : recipes.length === 0 ? (
-        <p className="muted">{q ? `Nothing matches “${q}”.` : `No recipes tagged “${tag}”.`}</p>
+        <p className="muted">
+          {q ? `Nothing matches “${q}”.` : favorites ? "No favourites yet. Tap ☆ on a recipe." : `No recipes tagged “${tag}”.`}
+        </p>
       ) : (
         <ul className="recipe-list">
           {recipes.map((r) => (
             <li key={r.id}>
-              <Link href={`/recipes/${r.slug}`}>{r.title}</Link>
+              <Link href={`/recipes/${r.slug}`}>
+                {r.favorite && <span className="star">★ </span>}
+                {r.title}
+              </Link>
               {totalMinutes(r) && <span className="muted time"> · {formatMinutes(totalMinutes(r)!)}</span>}
               {r.description && <p className="muted">{r.description}</p>}
             </li>

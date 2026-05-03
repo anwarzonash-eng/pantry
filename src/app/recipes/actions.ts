@@ -1,8 +1,9 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getDb } from "@/lib/db";
-import { createRecipe, deleteRecipe, parseTags, updateRecipe, type RecipeInput } from "@/lib/recipes";
+import { createRecipe, deleteRecipe, parseTags, setFavorite, updateRecipe, type RecipeInput } from "@/lib/recipes";
 
 const lines = (value: FormDataEntryValue | null) =>
   String(value ?? "")
@@ -40,4 +41,9 @@ export async function saveRecipe(id: number, form: FormData) {
 export async function removeRecipe(id: number) {
   deleteRecipe(getDb(), id);
   redirect("/");
+}
+
+export async function toggleFavorite(id: number, favorite: boolean) {
+  setFavorite(getDb(), id, favorite);
+  revalidatePath("/", "layout");
 }

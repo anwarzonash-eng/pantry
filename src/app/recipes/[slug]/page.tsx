@@ -5,6 +5,7 @@ import { getRecipeBySlug } from "@/lib/recipes";
 import { IngredientList } from "@/components/IngredientList";
 import { PrintButton } from "@/components/PrintButton";
 import { formatMinutes, totalMinutes } from "@/lib/time";
+import { toggleFavorite } from "../actions";
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +18,19 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
   return (
     <article className="recipe">
       <div className="page-head">
-        <h1>{recipe.title}</h1>
+        <h1>
+          <form action={toggleFavorite.bind(null, recipe.id, !recipe.favorite)} className="fav-form">
+            <button
+              type="submit"
+              className={`fav ${recipe.favorite ? "on" : ""}`}
+              aria-pressed={recipe.favorite}
+              aria-label={recipe.favorite ? "Remove from favourites" : "Add to favourites"}
+            >
+              {recipe.favorite ? "★" : "☆"}
+            </button>
+          </form>
+          {recipe.title}
+        </h1>
         <span className="actions">
           <PrintButton />
           <a href={`/recipes/${recipe.slug}/markdown`}>Markdown</a>
