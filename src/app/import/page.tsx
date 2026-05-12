@@ -1,3 +1,4 @@
+import { HtmlForm } from "./HtmlForm";
 import { ImportForm } from "./ImportForm";
 import { RestoreForm } from "./RestoreForm";
 
@@ -7,6 +8,10 @@ export default function ImportPage() {
       <h1>Import a recipe</h1>
       <p className="muted">Paste a recipe in Markdown, for example one exported from pantry.</p>
       <ImportForm />
+
+      <h2>From a recipe website</h2>
+      <p className="muted">Most recipe sites include the recipe as structured data in the page. Paste the page source to pick it up.</p>
+      <HtmlForm />
 
       <h2>Backup</h2>
       <p>
