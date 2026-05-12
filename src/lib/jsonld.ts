@@ -36,7 +36,23 @@ export function parseDuration(value: Json): number | null {
 
 function steps(value: Json): string[] {
   if (typeof value === "string") return value.split(/\n+/).map((s) => text(s)).filter(Boolean);
-  return asArray(value).flatMap((s) => (typeof s === "string" ? [text(s)] : [text((s as Record<string, Json>)?.text)])).filter(Boolean);
+  return asArray(value)
+    .flatMap((s): string[] => {
+      if (typeof s === "string") return [text(s)];
+      const node = s as Record<string, Json>;
+      // HowToSection groups steps: { "@type": "HowToSection", name, itemListElement: [...] }
+      if (node?.itemListElement) return steps(node.itemListElement);
+      return [text(node?.text ?? node?.name)];
+    })
+    .filter(Boolean);
+}
+
+/** All nodes in the data, including those inside "@graph" (Yoast and similar). */
+function nodes(data: Json): Json[] {
+  return asArray(data).flatMap((n) => {
+    const graph = (n as Record<string, Json>)?.["@graph"];
+    return graph ? [n, ...nodes(graph)] : [n];
+  });
 }
 
 function recipeFrom(node: Record<string, Json>, url?: string): RecipeInput {
@@ -65,7 +81,7 @@ export function recipeFromHtml(html: string, url?: string): RecipeInput | null {
     } catch {
       continue;
     }
-    for (const node of asArray(data)) {
+    for (const node of nodes(data)) {
       if (isRecipe(node)) {
         const recipe = recipeFrom(node, url);
         if (recipe.title) return recipe;

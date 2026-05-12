@@ -55,3 +55,28 @@ describe("parseDuration", () => {
     expect(parseDuration("soon")).toBeNull();
   });
 });
+
+describe("real-world shapes", () => {
+  it("recipe inside @graph", () => {
+    const html = page({
+      "@context": "https://schema.org",
+      "@graph": [
+        { "@type": "WebSite", name: "A food blog" },
+        { "@type": "Recipe", name: "Blog Brownies", recipeIngredient: ["200 g chocolate"] },
+      ],
+    });
+    expect(recipeFromHtml(html)?.title).toBe("Blog Brownies");
+  });
+
+  it("steps grouped in HowToSection", () => {
+    const html = page({
+      "@type": "Recipe",
+      name: "Layer Cake",
+      recipeInstructions: [
+        { "@type": "HowToSection", name: "Sponge", itemListElement: [{ "@type": "HowToStep", text: "Bake the sponges." }] },
+        { "@type": "HowToSection", name: "Icing", itemListElement: [{ "@type": "HowToStep", text: "Whip the cream." }] },
+      ],
+    });
+    expect(recipeFromHtml(html)?.steps).toEqual(["Bake the sponges.", "Whip the cream."]);
+  });
+});
