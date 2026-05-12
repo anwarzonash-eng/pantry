@@ -8,12 +8,16 @@ export function HtmlForm() {
   return (
     <form action={action} className="recipe-form">
       <label>
-        Page source
-        <textarea name="html" rows={6} placeholder="Open the recipe page, View source, copy all of it and paste it here" required />
+        Link
+        <input name="url" type="url" placeholder="https://" />
       </label>
+      <details>
+        <summary className="muted">or paste the page source</summary>
+        <textarea name="html" rows={6} placeholder="Open the recipe page, View source, copy all of it and paste it here" />
+      </details>
       {state.error && <p className="error">{state.error}</p>}
       <button className="button" type="submit" disabled={pending}>
-        {pending ? "Reading…" : "Import from page source"}
+        {pending ? "Reading…" : "Import"}
       </button>
     </form>
   );

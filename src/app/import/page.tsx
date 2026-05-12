@@ -10,7 +10,10 @@ export default function ImportPage() {
       <ImportForm />
 
       <h2>From a recipe website</h2>
-      <p className="muted">Most recipe sites include the recipe as structured data in the page. Paste the page source to pick it up.</p>
+      <p className="muted">
+        Most recipe sites include the recipe as structured data in the page. Paste a link, or the page source if the site
+        blocks downloads.
+      </p>
       <HtmlForm />
 
       <h2>Backup</h2>
