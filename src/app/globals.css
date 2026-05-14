@@ -261,3 +261,5 @@ code { background: var(--chip); padding: 1px 6px; border-radius: 4px; font-size:
 .fav.on, .star { color: #e0a800; }
 
 .recipe-form details textarea { width: 100%; margin-top: 6px; font: inherit; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); color: var(--text); }
+
+.ingredients li.section, .steps li.section { list-style: none; font-weight: 600; margin: 14px 0 4px -18px; color: var(--muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.04em; }

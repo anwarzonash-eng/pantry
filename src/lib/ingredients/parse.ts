@@ -95,3 +95,13 @@ export function parseIngredient(raw: string): Ingredient {
   const note = [sizeNote, after].filter(Boolean).join(", ");
   return { raw, quantity, quantityMax, unit, name, note };
 }
+
+/**
+ * "For the sauce:" or "Topping:" is a heading inside the list, not an
+ * ingredient. Returns the heading text, or null for a normal line.
+ */
+export function sectionHeading(line: string): string | null {
+  const t = line.trim();
+  if (!t.endsWith(":") || /^\d/.test(t) || t.length > 60) return null;
+  return t.slice(0, -1).trim() || null;
+}

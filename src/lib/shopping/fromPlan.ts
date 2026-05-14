@@ -1,6 +1,6 @@
 import type Database from "better-sqlite3";
 import { addDays } from "../dates";
-import { parseIngredient } from "../ingredients/parse";
+import { parseIngredient, sectionHeading } from "../ingredients/parse";
 import { mealsBetween } from "../plan";
 import { getRecipe } from "../recipes";
 import { buildShoppingList, type Needed, type ShoppingLine } from "./build";
@@ -13,6 +13,7 @@ export function shoppingForWeek(db: Database.Database, monday: string): Shopping
     if (!recipe) continue;
     const factor = meal.servings ? meal.servings / recipe.servings : 1;
     for (const line of recipe.ingredients) {
+      if (sectionHeading(line)) continue;
       needed.push({ recipe: recipe.title, ingredient: parseIngredient(line), factor });
     }
   }

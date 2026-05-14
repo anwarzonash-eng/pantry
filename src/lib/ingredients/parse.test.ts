@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseIngredient } from "./parse";
+import { parseIngredient, sectionHeading } from "./parse";
 
 const p = (line: string) => {
   const { quantity, unit, name, note } = parseIngredient(line);
@@ -74,5 +74,15 @@ describe("parseIngredient, brackets", () => {
 
   it("brackets later in the line stay in the name", () => {
     expect(p("1 cup stock (or water)").name).toBe("stock (or water)");
+  });
+});
+
+describe("sectionHeading", () => {
+  it("lines ending in a colon", () => {
+    expect(sectionHeading("For the sauce:")).toBe("For the sauce");
+    expect(sectionHeading(" Topping: ")).toBe("Topping");
+    expect(sectionHeading("2 cups flour")).toBeNull();
+    expect(sectionHeading("1 tsp salt:")).toBeNull();
+    expect(sectionHeading(":")).toBeNull();
   });
 });

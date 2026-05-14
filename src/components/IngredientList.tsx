@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { parseIngredient } from "@/lib/ingredients/parse";
+import { parseIngredient, sectionHeading } from "@/lib/ingredients/parse";
 import { formatAmount } from "@/lib/ingredients/format";
 import { scaleIngredient } from "@/lib/ingredients/scale";
 
@@ -25,6 +25,14 @@ export function IngredientList({ lines, servings }: { lines: string[]; servings:
       </div>
       <ul className="ingredients">
         {lines.map((line, i) => {
+          const heading = sectionHeading(line);
+          if (heading) {
+            return (
+              <li key={i} className="section">
+                {heading}
+              </li>
+            );
+          }
           const ing = scaleIngredient(parseIngredient(line), factor);
           if (ing.quantity === null) return <li key={i}>{line}</li>;
           return (

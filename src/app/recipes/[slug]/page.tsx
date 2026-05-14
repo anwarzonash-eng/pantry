@@ -4,6 +4,7 @@ import { getDb } from "@/lib/db";
 import { getRecipeBySlug } from "@/lib/recipes";
 import { IngredientList } from "@/components/IngredientList";
 import { PrintButton } from "@/components/PrintButton";
+import { sectionHeading } from "@/lib/ingredients/parse";
 import { formatMinutes, totalMinutes } from "@/lib/time";
 import { toggleFavorite } from "../actions";
 
@@ -62,9 +63,15 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
         <section>
           <h2>Steps</h2>
           <ol className="steps">
-            {recipe.steps.map((step, i) => (
-              <li key={i}>{step}</li>
-            ))}
+            {recipe.steps.map((step, i) =>
+              sectionHeading(step) ? (
+                <li key={i} className="section">
+                  {sectionHeading(step)}
+                </li>
+              ) : (
+                <li key={i}>{step}</li>
+              ),
+            )}
           </ol>
           {recipe.notes && (
             <>
