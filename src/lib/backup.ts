@@ -21,6 +21,7 @@ export type Backup = {
     sourceUrl?: string;
     prepMinutes?: number | null;
     cookMinutes?: number | null;
+    imageUrl?: string;
   }[];
   plan: { date: string; slot: string; recipe: string; servings: number | null }[];
   pantry: string[];
@@ -41,8 +42,8 @@ export function exportAll(db: Database.Database, now = new Date()): Backup {
     version: BACKUP_VERSION,
     exportedAt: now.toISOString(),
     recipes: recipes.map(
-      ({ slug, title, description, servings, ingredients, steps, tags, notes, sourceUrl, prepMinutes, cookMinutes }) => ({
-        slug, title, description, servings, ingredients, steps, tags, notes, sourceUrl, prepMinutes, cookMinutes,
+      ({ slug, title, description, servings, ingredients, steps, tags, notes, sourceUrl, prepMinutes, cookMinutes, imageUrl }) => ({
+        slug, title, description, servings, ingredients, steps, tags, notes, sourceUrl, prepMinutes, cookMinutes, imageUrl,
       }),
     ),
     plan: plan

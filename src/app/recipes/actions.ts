@@ -25,6 +25,7 @@ function readForm(form: FormData): RecipeInput {
     sourceUrl: String(form.get("sourceUrl") ?? ""),
     prepMinutes: Number(form.get("prepMinutes")) || null,
     cookMinutes: Number(form.get("cookMinutes")) || null,
+    imageUrl: String(form.get("imageUrl") ?? ""),
   };
 }
 

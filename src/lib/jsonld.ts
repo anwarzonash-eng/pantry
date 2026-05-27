@@ -68,7 +68,15 @@ function recipeFrom(node: Record<string, Json>, url?: string): RecipeInput {
     prepMinutes: parseDuration(node.prepTime),
     cookMinutes: parseDuration(node.cookTime),
     sourceUrl: url,
+    imageUrl: imageFrom(node.image),
   };
+}
+
+function imageFrom(value: Json): string | undefined {
+  const first = asArray(value)[0];
+  if (typeof first === "string") return first;
+  const url = (first as Record<string, Json>)?.url;
+  return typeof url === "string" ? url : undefined;
 }
 
 /** Find a schema.org Recipe in a page's HTML. Returns null when there is none. */

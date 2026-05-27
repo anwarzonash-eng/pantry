@@ -38,6 +38,10 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
           <Link href={`/recipes/${recipe.slug}/edit`}>Edit</Link>
         </span>
       </div>
+      {recipe.imageUrl && (
+        // eslint-disable-next-line @next/next/no-img-element -- images come from anywhere, no optimisation
+        <img src={recipe.imageUrl} alt="" className="hero" />
+      )}
       {recipe.description && <p className="lead">{recipe.description}</p>}
       <p className="muted meta">
         <span>Serves {recipe.servings}</span>

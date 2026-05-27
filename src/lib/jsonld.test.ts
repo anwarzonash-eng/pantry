@@ -32,6 +32,7 @@ describe("recipeFromHtml", () => {
       prepMinutes: 10,
       cookMinutes: 65,
       sourceUrl: "https://example.com/flatbreads",
+      imageUrl: undefined,
     });
   });
 
@@ -78,5 +79,14 @@ describe("real-world shapes", () => {
       ],
     });
     expect(recipeFromHtml(html)?.steps).toEqual(["Bake the sponges.", "Whip the cream."]);
+  });
+});
+
+describe("images", () => {
+  it("string, list or ImageObject", () => {
+    const img = (image: unknown) => recipeFromHtml(page({ "@type": "Recipe", name: "X", image }))?.imageUrl;
+    expect(img("https://example.com/a.jpg")).toBe("https://example.com/a.jpg");
+    expect(img(["https://example.com/b.jpg", "https://example.com/c.jpg"])).toBe("https://example.com/b.jpg");
+    expect(img({ "@type": "ImageObject", url: "https://example.com/d.jpg" })).toBe("https://example.com/d.jpg");
   });
 });

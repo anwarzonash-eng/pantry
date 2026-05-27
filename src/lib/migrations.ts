@@ -84,6 +84,9 @@ const MIGRATIONS: Migration[] = [
 
   // 11: favourites
   `ALTER TABLE recipes ADD COLUMN favorite INTEGER NOT NULL DEFAULT 0;`,
+
+  // 12: a photo, by link
+  `ALTER TABLE recipes ADD COLUMN image_url TEXT NOT NULL DEFAULT '';`,
 ];
 
 export function migrate(db: Database.Database): void {

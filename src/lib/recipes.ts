@@ -16,6 +16,7 @@ export type Recipe = {
   prepMinutes: number | null;
   cookMinutes: number | null;
   favorite: boolean;
+  imageUrl: string;
   createdAt: number;
   updatedAt: number;
 };
@@ -31,6 +32,7 @@ export type RecipeInput = {
   sourceUrl?: string;
   prepMinutes?: number | null;
   cookMinutes?: number | null;
+  imageUrl?: string;
 };
 
 type Row = {
@@ -49,6 +51,7 @@ type Row = {
   prep_minutes: number | null;
   cook_minutes: number | null;
   favorite: number;
+  image_url: string;
 };
 
 // recipes with their tags as "a,b,c"
@@ -74,6 +77,7 @@ function toRecipe(row: Row): Recipe {
     prepMinutes: row.prep_minutes,
     cookMinutes: row.cook_minutes,
     favorite: row.favorite === 1,
+    imageUrl: row.image_url,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
@@ -162,11 +166,14 @@ export function updateRecipe(db: Database.Database, id: number, input: RecipeInp
 /** Optional fields, kept apart so the main insert stays readable. */
 function saveDetails(db: Database.Database, id: number, input: RecipeInput): void {
   const minutes = (n: number | null | undefined) => (n && n > 0 ? Math.round(n) : null);
-  db.prepare("UPDATE recipes SET notes = ?, source_url = ?, prep_minutes = ?, cook_minutes = ? WHERE id = ?").run(
+  db.prepare(
+    "UPDATE recipes SET notes = ?, source_url = ?, prep_minutes = ?, cook_minutes = ?, image_url = ? WHERE id = ?",
+  ).run(
     input.notes?.trim() ?? "",
     cleanUrl(input.sourceUrl),
     minutes(input.prepMinutes),
     minutes(input.cookMinutes),
+    cleanUrl(input.imageUrl),
     id,
   );
 }

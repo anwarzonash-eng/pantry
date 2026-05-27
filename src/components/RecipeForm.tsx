@@ -52,6 +52,10 @@ export function RecipeForm({ action, recipe }: Props) {
         <textarea name="notes" rows={3} defaultValue={recipe?.notes} />
       </label>
       <label>
+        Photo <span className="muted">(link to an image)</span>
+        <input name="imageUrl" type="url" defaultValue={recipe?.imageUrl} placeholder="https://" />
+      </label>
+      <label>
         Source <span className="muted">(link to where the recipe came from)</span>
         <input name="sourceUrl" type="url" defaultValue={recipe?.sourceUrl} placeholder="https://" />
       </label>
