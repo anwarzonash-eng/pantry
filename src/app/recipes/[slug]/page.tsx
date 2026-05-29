@@ -6,7 +6,7 @@ import { IngredientList } from "@/components/IngredientList";
 import { PrintButton } from "@/components/PrintButton";
 import { sectionHeading } from "@/lib/ingredients/parse";
 import { formatMinutes, totalMinutes } from "@/lib/time";
-import { toggleFavorite } from "../actions";
+import { copyRecipe, toggleFavorite } from "../actions";
 
 export const dynamic = "force-dynamic";
 
@@ -35,6 +35,11 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
         <span className="actions">
           <PrintButton />
           <a href={`/recipes/${recipe.slug}/markdown`}>Markdown</a>
+          <form action={copyRecipe.bind(null, recipe.id)}>
+            <button type="submit" className="link-button">
+              Duplicate
+            </button>
+          </form>
           <Link href={`/recipes/${recipe.slug}/edit`}>Edit</Link>
         </span>
       </div>

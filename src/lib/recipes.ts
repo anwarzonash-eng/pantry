@@ -228,3 +228,10 @@ export function listTags(db: Database.Database): { name: string; count: number }
     )
     .all() as { name: string; count: number }[];
 }
+
+/** A copy to make a variation from: "Pancakes (copy)", not a favourite. */
+export function duplicateRecipe(db: Database.Database, id: number): Recipe | null {
+  const r = getRecipe(db, id);
+  if (!r) return null;
+  return createRecipe(db, { ...r, title: `${r.title} (copy)` });
+}

@@ -103,3 +103,16 @@ describe("favourites", () => {
     expect(listRecipes(d, { favorites: true })).toEqual([]);
   });
 });
+
+describe("duplicate", () => {
+  it("copies everything under a new slug", async () => {
+    const { duplicateRecipe } = await import("./recipes");
+    const d = db();
+    const r = createRecipe(d, { title: "Pancakes", ingredients: ["1 egg"], steps: ["Fry."], tags: ["breakfast"], cookMinutes: 10 });
+    const copy = duplicateRecipe(d, r.id)!;
+    expect(copy.slug).toBe("pancakes-copy");
+    expect(copy.title).toBe("Pancakes (copy)");
+    expect([copy.ingredients, copy.tags, copy.cookMinutes]).toEqual([["1 egg"], ["breakfast"], 10]);
+    expect(duplicateRecipe(d, 999)).toBeNull();
+  });
+});

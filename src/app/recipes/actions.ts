@@ -3,7 +3,15 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getDb } from "@/lib/db";
-import { createRecipe, deleteRecipe, parseTags, setFavorite, updateRecipe, type RecipeInput } from "@/lib/recipes";
+import {
+  createRecipe,
+  deleteRecipe,
+  duplicateRecipe,
+  parseTags,
+  setFavorite,
+  updateRecipe,
+  type RecipeInput,
+} from "@/lib/recipes";
 
 const lines = (value: FormDataEntryValue | null) =>
   String(value ?? "")
@@ -47,4 +55,9 @@ export async function removeRecipe(id: number) {
 export async function toggleFavorite(id: number, favorite: boolean) {
   setFavorite(getDb(), id, favorite);
   revalidatePath("/", "layout");
+}
+
+export async function copyRecipe(id: number) {
+  const copy = duplicateRecipe(getDb(), id);
+  redirect(copy ? `/recipes/${copy.slug}/edit` : "/");
 }
