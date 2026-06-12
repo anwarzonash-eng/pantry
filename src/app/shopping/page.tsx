@@ -5,6 +5,8 @@ import { formatQuantity } from "@/lib/ingredients/format";
 import { groupByAisle } from "@/lib/shopping/aisles";
 import { listItems, type ShoppingItem } from "@/lib/shopping/list";
 import { addItem, deleteItem, generateList, toggleItem } from "./actions";
+import { CopyButton } from "./CopyButton";
+import { listAsText } from "@/lib/shopping/text";
 
 export const dynamic = "force-dynamic";
 
@@ -31,6 +33,7 @@ export default async function ShoppingPage({ searchParams }: { searchParams: Pro
           {items.length ? "Update from the plan" : "Make list from the plan"}
         </button>
         {items.length > 0 && <span className="muted">{left} left to buy</span>}
+        {left > 0 && <CopyButton text={listAsText(items)} />}
       </form>
 
       <form action={addItem.bind(null, monday)} className="add-item">
