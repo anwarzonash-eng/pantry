@@ -33,6 +33,7 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
           {recipe.title}
         </h1>
         <span className="actions">
+          <Link href={`/recipes/${recipe.slug}/cook`}>Cook</Link>
           <PrintButton />
           <a href={`/recipes/${recipe.slug}/markdown`}>Markdown</a>
           <form action={copyRecipe.bind(null, recipe.id)}>
