@@ -9,8 +9,19 @@ type Search = { tag?: string; q?: string; sort?: string; fav?: string };
 
 const SORT_LABELS: Record<Sort, string> = { recent: "Recently changed", title: "A–Z", quick: "Quickest" };
 
+/** Link to the list with some filters changed, keeping the others (search and sort). */
+function listHref(current: Search, change: Partial<Search>): string {
+  const params = new URLSearchParams();
+  for (const [k, v] of Object.entries({ ...current, ...change })) {
+    if (v && !(k === "sort" && v === "recent")) params.set(k, v);
+  }
+  const qs = params.toString();
+  return qs ? `/?${qs}` : "/";
+}
+
 export default async function Home({ searchParams }: { searchParams: Promise<Search> }) {
-  const { tag, q, sort: sortParam, fav } = await searchParams;
+  const search = await searchParams;
+  const { tag, q, sort: sortParam, fav } = search;
   const favorites = fav === "1";
   const sort = (sortParam && sortParam in SORTS ? sortParam : "recent") as Sort;
   const db = getDb();
@@ -29,6 +40,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<Sea
       <form className="search" action="/">
         <input name="q" type="search" placeholder="Search recipes or ingredients" defaultValue={q} />
         {tag && <input type="hidden" name="tag" value={tag} />}
+        {favorites && <input type="hidden" name="fav" value="1" />}
         <select name="sort" defaultValue={sort} aria-label="Sort">
           {(Object.keys(SORT_LABELS) as Sort[]).map((s) => (
             <option key={s} value={s}>
@@ -41,16 +53,16 @@ export default async function Home({ searchParams }: { searchParams: Promise<Sea
 
       {tags.length > 0 && (
         <p className="tags">
-          <Link href="/" className={`tag ${tag || favorites ? "" : "active"}`}>
+          <Link href={listHref(search, { tag: undefined, fav: undefined })} className={`tag ${tag || favorites ? "" : "active"}`}>
             all
           </Link>
-          <Link href="/?fav=1" className={`tag ${favorites ? "active" : ""}`}>
+          <Link href={listHref(search, { tag: undefined, fav: "1" })} className={`tag ${favorites ? "active" : ""}`}>
             ★ favourites
           </Link>
           {tags.map((t) => (
             <Link
               key={t.name}
-              href={`/?tag=${encodeURIComponent(t.name)}`}
+              href={listHref(search, { tag: t.name, fav: undefined })}
               className={`tag ${tag?.toLowerCase() === t.name.toLowerCase() ? "active" : ""}`}
             >
               {t.name} <span className="count">{t.count}</span>
