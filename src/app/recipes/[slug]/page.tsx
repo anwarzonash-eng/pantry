@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
+import { parseSystem, UNIT_COOKIE } from "@/lib/ingredients/units";
 import { getDb } from "@/lib/db";
 import { getRecipeBySlug } from "@/lib/recipes";
 import { IngredientList } from "@/components/IngredientList";
@@ -15,6 +17,7 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
   const recipe = getRecipeBySlug(getDb(), slug);
   if (!recipe) notFound();
   const total = totalMinutes(recipe);
+  const system = parseSystem((await cookies()).get(UNIT_COOKIE)?.value);
 
   return (
     <article className="recipe">
@@ -68,7 +71,7 @@ export default async function RecipePage({ params }: { params: Promise<{ slug: s
       <div className="recipe-body">
         <section>
           <h2>Ingredients</h2>
-          <IngredientList lines={recipe.ingredients} servings={recipe.servings} />
+          <IngredientList lines={recipe.ingredients} servings={recipe.servings} system={system} />
         </section>
         <section>
           <h2>Steps</h2>

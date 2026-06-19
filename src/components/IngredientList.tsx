@@ -4,9 +4,12 @@ import { useState } from "react";
 import { parseIngredient, sectionHeading } from "@/lib/ingredients/parse";
 import { formatAmount } from "@/lib/ingredients/format";
 import { scaleIngredient } from "@/lib/ingredients/scale";
+import { inSystem, type UnitSystem } from "@/lib/ingredients/units";
 
 /** Ingredient list with a servings control that scales the amounts. */
-export function IngredientList({ lines, servings }: { lines: string[]; servings: number }) {
+type Props = { lines: string[]; servings: number; system: UnitSystem | null };
+
+export function IngredientList({ lines, servings, system }: Props) {
   const [people, setPeople] = useState(servings);
   const factor = people / servings;
 
@@ -33,8 +36,15 @@ export function IngredientList({ lines, servings }: { lines: string[]; servings:
               </li>
             );
           }
-          const ing = scaleIngredient(parseIngredient(line), factor);
+          let ing = scaleIngredient(parseIngredient(line), factor);
           if (ing.quantity === null) return <li key={i}>{line}</li>;
+          if (system) {
+            const shown = inSystem(ing.quantity, ing.unit, system);
+            if (shown.unit !== ing.unit) {
+              const ratio = shown.quantity / ing.quantity;
+              ing = { ...ing, ...shown, quantityMax: ing.quantityMax === null ? null : ing.quantityMax * ratio };
+            }
+          }
           return (
             <li key={i}>
               <strong>{formatAmount(ing)}</strong>{" "}

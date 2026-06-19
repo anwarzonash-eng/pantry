@@ -73,3 +73,28 @@ export function bestUnit(base: number, dim: Dimension, system: UnitSystem = "met
   }
   return base < MASS_G.lb ? { quantity: base / MASS_G.oz, unit: "oz" } : { quantity: base / MASS_G.lb, unit: "lb" };
 }
+
+// spoons are the same everywhere, so they are never converted
+const METRIC_UNITS = new Set(["g", "kg", "ml", "cl", "dl", "l"]);
+const IMPERIAL_UNITS = new Set(["cup", "oz", "lb", "pint", "quart"]);
+
+/**
+ * Show an amount in the preferred system: 2 cups -> 473 ml for metric,
+ * 500 g -> 1.1 lb for imperial. Other units stay as written.
+ */
+export function inSystem(quantity: number, unit: string | null, system: UnitSystem): { quantity: number; unit: string | null } {
+  if (!unit) return { quantity, unit };
+  const wrongSide = system === "metric" ? IMPERIAL_UNITS.has(unit) : METRIC_UNITS.has(unit);
+  const base = wrongSide ? toBase(quantity, unit) : null;
+  if (!base) return { quantity, unit };
+  const best = bestUnit(base.quantity, base.dimension, system);
+  // whole millilitres and grams read better than 236.6 ml
+  if (system === "metric" && best.quantity >= 10) best.quantity = Math.round(best.quantity / 5) * 5;
+  return best;
+}
+
+export const UNIT_COOKIE = "units";
+
+export function parseSystem(value: string | undefined): UnitSystem | null {
+  return value === "metric" || value === "imperial" ? value : null;
+}

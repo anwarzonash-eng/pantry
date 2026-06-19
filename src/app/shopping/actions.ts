@@ -1,6 +1,8 @@
 "use server";
 
+import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { parseSystem, UNIT_COOKIE } from "@/lib/ingredients/units";
 import { getDb } from "@/lib/db";
 import { pantryMatcher } from "@/lib/pantry";
 import { isISODate } from "@/lib/dates";
@@ -11,7 +13,8 @@ import { addManualItem, removeItem, saveGenerated, setChecked } from "@/lib/shop
 export async function generateList(week: string) {
   if (!isISODate(week)) return;
   const db = getDb();
-  saveGenerated(db, week, shoppingForWeek(db, week), pantryMatcher(db));
+  const system = parseSystem((await cookies()).get(UNIT_COOKIE)?.value) ?? "metric";
+  saveGenerated(db, week, shoppingForWeek(db, week, system), pantryMatcher(db));
   revalidatePath("/shopping");
 }
 

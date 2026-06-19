@@ -3,10 +3,11 @@ import { addDays } from "../dates";
 import { parseIngredient, sectionHeading } from "../ingredients/parse";
 import { mealsBetween } from "../plan";
 import { getRecipe } from "../recipes";
+import type { UnitSystem } from "../ingredients/units";
 import { buildShoppingList, type Needed, type ShoppingLine } from "./build";
 
 /** Shopping list for the seven days starting at `monday`. */
-export function shoppingForWeek(db: Database.Database, monday: string): ShoppingLine[] {
+export function shoppingForWeek(db: Database.Database, monday: string, system: UnitSystem = "metric"): ShoppingLine[] {
   const needed: Needed[] = [];
   for (const meal of mealsBetween(db, monday, addDays(monday, 6))) {
     const recipe = getRecipe(db, meal.recipeId);
@@ -17,5 +18,5 @@ export function shoppingForWeek(db: Database.Database, monday: string): Shopping
       needed.push({ recipe: recipe.title, ingredient: parseIngredient(line), factor });
     }
   }
-  return buildShoppingList(needed);
+  return buildShoppingList(needed, system);
 }

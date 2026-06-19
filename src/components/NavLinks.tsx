@@ -9,6 +9,7 @@ const LINKS = [
   { href: "/shopping", label: "Shopping" },
   { href: "/pantry", label: "Pantry" },
   { href: "/import", label: "Import" },
+  { href: "/settings", label: "Settings" },
 ];
 
 export function NavLinks() {
