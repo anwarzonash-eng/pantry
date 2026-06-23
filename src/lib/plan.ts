@@ -1,4 +1,5 @@
 import type Database from "better-sqlite3";
+import { addDays } from "./dates";
 
 export const SLOTS = ["breakfast", "lunch", "dinner"] as const;
 export type Slot = (typeof SLOTS)[number];
@@ -41,4 +42,25 @@ export function mealsBetween(db: Database.Database, from: string, to: string): P
     )
     .all(from, to) as PlannedMeal[];
   return rows;
+}
+
+/**
+ * Copy the meals of the week starting `fromMonday` to the week starting
+ * `toMonday`. Slots that already have something are left alone.
+ */
+export function copyWeek(db: Database.Database, fromMonday: string, toMonday: string): number {
+  const source = mealsBetween(db, fromMonday, addDays(fromMonday, 6));
+  const target = mealsBetween(db, toMonday, addDays(toMonday, 6));
+  const taken = new Set(target.map((m) => `${m.date}|${m.slot}`));
+  const offset = Math.round((Date.parse(toMonday) - Date.parse(fromMonday)) / 86_400_000);
+  let copied = 0;
+  db.transaction(() => {
+    for (const m of source) {
+      const date = addDays(m.date, offset);
+      if (taken.has(`${date}|${m.slot}`)) continue;
+      addToPlan(db, { date, slot: m.slot, recipeId: m.recipeId, servings: m.servings });
+      copied++;
+    }
+  })();
+  return copied;
 }

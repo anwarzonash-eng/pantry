@@ -3,7 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { getDb } from "@/lib/db";
 import { isISODate } from "@/lib/dates";
-import { addToPlan, removeFromPlan, SLOTS, type Slot } from "@/lib/plan";
+import { addDays } from "@/lib/dates";
+import { addToPlan, copyWeek, removeFromPlan, SLOTS, type Slot } from "@/lib/plan";
 
 export async function planMeal(form: FormData) {
   const date = String(form.get("date") ?? "");
@@ -17,5 +18,11 @@ export async function planMeal(form: FormData) {
 
 export async function unplanMeal(id: number) {
   removeFromPlan(getDb(), id);
+  revalidatePath("/plan");
+}
+
+export async function copyLastWeek(monday: string) {
+  if (!isISODate(monday)) return;
+  copyWeek(getDb(), addDays(monday, -7), monday);
   revalidatePath("/plan");
 }

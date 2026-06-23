@@ -4,7 +4,7 @@ import { addDays, formatDay, isISODate, startOfWeek, toISODate, weekDays } from 
 import { mealsBetween, SLOTS } from "@/lib/plan";
 import { listRecipes } from "@/lib/recipes";
 import { AddMeal } from "./AddMeal";
-import { unplanMeal } from "./actions";
+import { copyLastWeek, unplanMeal } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -35,7 +35,12 @@ export default async function PlanPage({ searchParams }: { searchParams: Promise
         </p>
       )}
       {recipes.length > 0 && meals.length === 0 && (
-        <p className="muted">Nothing planned this week yet. Pick recipes from the lists below.</p>
+        <form action={copyLastWeek.bind(null, monday)} className="toolbar">
+          <span className="muted">Nothing planned this week yet.</span>
+          <button type="submit" className="link-button">
+            Copy last week
+          </button>
+        </form>
       )}
       <div className="week">
         {days.map((day) => (

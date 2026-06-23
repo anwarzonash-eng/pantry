@@ -1,7 +1,7 @@
 import Database from "better-sqlite3";
 import { describe, expect, it } from "vitest";
 import { migrate } from "./migrations";
-import { addToPlan, mealsBetween, removeFromPlan } from "./plan";
+import { addToPlan, copyWeek, mealsBetween, removeFromPlan } from "./plan";
 import { createRecipe } from "./recipes";
 
 describe("meal plan", () => {
@@ -22,5 +22,21 @@ describe("meal plan", () => {
     addToPlan(db, { date: "2026-01-07", slot: "dinner", recipeId: soup.id, servings: 6 });
     const dinner = mealsBetween(db, "2026-01-07", "2026-01-07")[0];
     expect([dinner.servings, dinner.recipeServings]).toEqual([6, 2]);
+  });
+});
+
+describe("copyWeek", () => {
+  it("copies into empty slots only", () => {
+    const db = new Database(":memory:");
+    migrate(db);
+    const a = createRecipe(db, { title: "A", ingredients: [], steps: [] });
+    const b = createRecipe(db, { title: "B", ingredients: [], steps: [] });
+    addToPlan(db, { date: "2026-06-15", slot: "dinner", recipeId: a.id, servings: 4 });
+    addToPlan(db, { date: "2026-06-16", slot: "dinner", recipeId: a.id });
+    addToPlan(db, { date: "2026-06-23", slot: "dinner", recipeId: b.id }); // Tuesday next week already planned
+
+    expect(copyWeek(db, "2026-06-15", "2026-06-22")).toBe(1);
+    const next = mealsBetween(db, "2026-06-22", "2026-06-28");
+    expect(next.map((m) => `${m.date}:${m.title}:${m.servings}`)).toEqual(["2026-06-22:A:4", "2026-06-23:B:null"]);
   });
 });
