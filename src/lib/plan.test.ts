@@ -1,7 +1,7 @@
 import Database from "better-sqlite3";
 import { describe, expect, it } from "vitest";
 import { migrate } from "./migrations";
-import { addToPlan, copyWeek, mealsBetween, removeFromPlan } from "./plan";
+import { addToPlan, copyWeek, mealsBetween, removeFromPlan, suggestDinners } from "./plan";
 import { createRecipe } from "./recipes";
 
 describe("meal plan", () => {
@@ -38,5 +38,20 @@ describe("copyWeek", () => {
     expect(copyWeek(db, "2026-06-15", "2026-06-22")).toBe(1);
     const next = mealsBetween(db, "2026-06-22", "2026-06-28");
     expect(next.map((m) => `${m.date}:${m.title}:${m.servings}`)).toEqual(["2026-06-22:A:4", "2026-06-23:B:null"]);
+  });
+});
+
+describe("suggestDinners", () => {
+  it("prefers dinners not planned for a long time", () => {
+    const db = new Database(":memory:");
+    migrate(db);
+    const curry = createRecipe(db, { title: "Curry", ingredients: [], steps: [], tags: ["dinner"] });
+    const pasta = createRecipe(db, { title: "Pasta", ingredients: [], steps: [], tags: ["dinner"] });
+    createRecipe(db, { title: "Stew", ingredients: [], steps: [], tags: ["dinner"] });
+    createRecipe(db, { title: "Oats", ingredients: [], steps: [], tags: ["breakfast"] });
+    addToPlan(db, { date: "2026-06-01", slot: "dinner", recipeId: curry.id });
+    addToPlan(db, { date: "2026-06-10", slot: "dinner", recipeId: pasta.id });
+    expect(suggestDinners(db, "2026-06-22").map((r) => r.title)).toEqual(["Stew", "Curry", "Pasta"]);
+    expect(suggestDinners(db, "2026-06-22", 1).map((r) => r.title)).toEqual(["Stew"]);
   });
 });

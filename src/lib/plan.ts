@@ -64,3 +64,25 @@ export function copyWeek(db: Database.Database, fromMonday: string, toMonday: st
   })();
   return copied;
 }
+
+/**
+ * Dinner ideas: recipes you have not planned for the longest time (never
+ * planned first), favourites before the rest. Only recipes tagged "dinner"
+ * when you have any.
+ */
+export function suggestDinners(db: Database.Database, before: string, count = 3): { id: number; title: string; slug: string }[] {
+  const tagged = db
+    .prepare("SELECT COUNT(*) AS n FROM recipe_tags rt JOIN tags t ON t.id = rt.tag_id WHERE t.name = 'dinner'")
+    .get() as { n: number };
+  const onlyDinner = tagged.n > 0
+    ? "AND EXISTS (SELECT 1 FROM recipe_tags rt JOIN tags t ON t.id = rt.tag_id WHERE rt.recipe_id = r.id AND t.name = 'dinner')"
+    : "";
+  return db
+    .prepare(
+      `SELECT r.id, r.title, r.slug, (SELECT MAX(date) FROM meal_plan m WHERE m.recipe_id = r.id AND m.date < ?) AS last
+       FROM recipes r WHERE 1 = 1 ${onlyDinner}
+       ORDER BY last IS NOT NULL, last, r.favorite DESC, r.title COLLATE NOCASE
+       LIMIT ?`,
+    )
+    .all(before, count) as { id: number; title: string; slug: string }[];
+}
