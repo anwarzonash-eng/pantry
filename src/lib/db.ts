@@ -12,6 +12,7 @@ export function getDb(): Database.Database {
     mkdirSync(dir, { recursive: true });
     db = new Database(path.join(dir, "pantry.db"));
     db.pragma("journal_mode = WAL");
+    db.pragma("foreign_keys = ON");
     migrate(db);
   }
   return db;

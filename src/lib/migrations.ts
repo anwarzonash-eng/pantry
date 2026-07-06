@@ -87,6 +87,32 @@ const MIGRATIONS: Migration[] = [
 
   // 12: a photo, by link
   `ALTER TABLE recipes ADD COLUMN image_url TEXT NOT NULL DEFAULT '';`,
+
+  // 13: deleting a recipe left its plan entries and tag links behind.
+  // SQLite cannot add a foreign key to an existing table, so rebuild the two
+  // tables with ON DELETE CASCADE and drop rows that already point nowhere.
+  `CREATE TABLE meal_plan_new (
+    id INTEGER PRIMARY KEY,
+    date TEXT NOT NULL,
+    slot TEXT NOT NULL CHECK (slot IN ('breakfast', 'lunch', 'dinner')),
+    recipe_id INTEGER NOT NULL REFERENCES recipes (id) ON DELETE CASCADE,
+    servings INTEGER
+  );
+  INSERT INTO meal_plan_new SELECT id, date, slot, recipe_id, servings FROM meal_plan
+    WHERE recipe_id IN (SELECT id FROM recipes);
+  DROP TABLE meal_plan;
+  ALTER TABLE meal_plan_new RENAME TO meal_plan;
+
+  CREATE TABLE recipe_tags_new (
+    recipe_id INTEGER NOT NULL REFERENCES recipes (id) ON DELETE CASCADE,
+    tag_id INTEGER NOT NULL REFERENCES tags (id) ON DELETE CASCADE,
+    PRIMARY KEY (recipe_id, tag_id)
+  );
+  INSERT INTO recipe_tags_new SELECT recipe_id, tag_id FROM recipe_tags
+    WHERE recipe_id IN (SELECT id FROM recipes) AND tag_id IN (SELECT id FROM tags);
+  DROP TABLE recipe_tags;
+  ALTER TABLE recipe_tags_new RENAME TO recipe_tags;
+  DELETE FROM tags WHERE id NOT IN (SELECT tag_id FROM recipe_tags);`,
 ];
 
 export function migrate(db: Database.Database): void {

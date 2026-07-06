@@ -193,7 +193,10 @@ export function setFavorite(db: Database.Database, id: number, favorite: boolean
 }
 
 export function deleteRecipe(db: Database.Database, id: number): boolean {
-  return db.prepare("DELETE FROM recipes WHERE id = ?").run(id).changes > 0;
+  const deleted = db.prepare("DELETE FROM recipes WHERE id = ?").run(id).changes > 0;
+  // plan entries and tag links go with it (ON DELETE CASCADE); tidy unused tags
+  db.prepare("DELETE FROM tags WHERE id NOT IN (SELECT tag_id FROM recipe_tags)").run();
+  return deleted;
 }
 
 /** "Dinner, quick , dinner" -> ["Dinner", "quick"] */

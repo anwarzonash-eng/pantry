@@ -55,3 +55,27 @@ describe("suggestDinners", () => {
     expect(suggestDinners(db, "2026-06-22", 1).map((r) => r.title)).toEqual(["Stew"]);
   });
 });
+
+describe("deleting a recipe", () => {
+  it("removes it from the plan and drops unused tags", async () => {
+    const { deleteRecipe, listTags } = await import("./recipes");
+    const db = new Database(":memory:");
+    db.pragma("foreign_keys = ON");
+    migrate(db);
+    const soup = createRecipe(db, { title: "Soup", ingredients: [], steps: [], tags: ["lunch", "winter"] });
+    createRecipe(db, { title: "Salad", ingredients: [], steps: [], tags: ["lunch"] });
+    addToPlan(db, { date: "2026-06-22", slot: "lunch", recipeId: soup.id });
+    deleteRecipe(db, soup.id);
+    expect(mealsBetween(db, "2026-06-22", "2026-06-28")).toEqual([]);
+    expect(db.prepare("SELECT COUNT(*) AS n FROM meal_plan").get()).toEqual({ n: 0 });
+    expect(listTags(db).map((t) => t.name)).toEqual(["lunch"]);
+  });
+
+  it("the migration cleans up rows left by earlier deletes", () => {
+    const db = new Database(":memory:");
+    migrate(db);
+    expect(db.pragma("user_version", { simple: true })).toBeGreaterThanOrEqual(13);
+    const fk = db.prepare("PRAGMA foreign_key_list(meal_plan)").all() as { table: string; on_delete: string }[];
+    expect(fk[0]).toMatchObject({ table: "recipes", on_delete: "CASCADE" });
+  });
+});
