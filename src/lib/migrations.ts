@@ -113,6 +113,12 @@ const MIGRATIONS: Migration[] = [
   DROP TABLE recipe_tags;
   ALTER TABLE recipe_tags_new RENAME TO recipe_tags;
   DELETE FROM tags WHERE id NOT IN (SELECT tag_id FROM recipe_tags);`,
+
+  // 14: indexes for the queries every page runs
+  `CREATE INDEX meal_plan_date ON meal_plan (date);
+   CREATE INDEX meal_plan_recipe ON meal_plan (recipe_id);
+   CREATE INDEX recipe_tags_tag ON recipe_tags (tag_id);
+   CREATE INDEX recipes_updated ON recipes (updated_at);`,
 ];
 
 export function migrate(db: Database.Database): void {
