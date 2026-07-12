@@ -31,6 +31,15 @@ npm run seed       # optional: a few sample recipes
 - Metric or US units, copy last week's plan, dinner ideas you have not had in a while
 - Dark mode and a print layout
 
+### Docker
+
+```bash
+docker build -t pantry .
+docker run -d -p 3000:3000 -v pantry-data:/app/data pantry
+```
+
+The database lives in the `pantry-data` volume.
+
 ## Tests
 
 ```bash
