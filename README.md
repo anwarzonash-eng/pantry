@@ -22,7 +22,14 @@ npm run seed       # optional: a few sample recipes
 - Readable URLs (`/recipes/chickpea-curry`) that stay the same when you rename a recipe
 - Servings control on each recipe that scales the amounts, shown as ½ ⅓ ¼ where it makes sense
 - Week plan with breakfast, lunch and dinner, optionally cooking more or fewer servings than the recipe makes
-- Shopping list made from the week plan: amounts of the same ingredient are added up (200 g + 0.5 kg = 700 g), grouped by supermarket aisle, tick items off, add your own
+- Shopping list made from the week plan: amounts of the same ingredient are added up (200 g + 0.5 kg = 700 g), grouped by supermarket aisle, tick items off, add your own, copy it as text
+- Pantry: things you already have are left off the list ("tomato" covers "tomatoes")
+- Import from Markdown, from a recipe website link (schema.org data), or from pasted page source; export any recipe as Markdown
+- JSON backup and restore of everything
+- Favourites, notes, source link, photo, prep and cook times, sections inside the ingredient list ("For the sauce:")
+- Cook mode: one step at a time in large text, keeps the screen on
+- Metric or US units, copy last week's plan, dinner ideas you have not had in a while
+- Dark mode and a print layout
 
 ## Tests
 
