@@ -14,6 +14,8 @@ npm run dev        # http://localhost:3000
 npm run seed       # optional: a few sample recipes
 ```
 
+The database is `data/pantry.db`. Set `DATA_DIR` to keep it somewhere else (see `.env.example`).
+
 ## What works so far
 
 - Add, edit and delete recipes
