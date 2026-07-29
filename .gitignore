@@ -9,6 +9,7 @@ next-env.d.ts
 
 # data
 /data/
+/backups/
 
 # env
 .env
