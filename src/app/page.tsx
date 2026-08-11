@@ -38,7 +38,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<Sea
       </div>
 
       <form className="search" action="/">
-        <input name="q" type="search" placeholder="Search recipes or ingredients" defaultValue={q} />
+        <input name="q" type="search" placeholder="Search recipes or ingredients" defaultValue={q} aria-label="Search recipes" />
         {tag && <input type="hidden" name="tag" value={tag} />}
         {favorites && <input type="hidden" name="fav" value="1" />}
         <select name="sort" defaultValue={sort} aria-label="Sort">

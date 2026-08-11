@@ -15,11 +15,11 @@ export function IngredientList({ lines, servings, system }: Props) {
 
   return (
     <>
-      <div className="scaler">
+      <div className="scaler" role="group" aria-label="Servings">
         <button type="button" onClick={() => setPeople((p) => Math.max(1, p - 1))} aria-label="Fewer servings">
           −
         </button>
-        <span>
+        <span aria-live="polite">
           {people} {people === 1 ? "serving" : "servings"}
         </span>
         <button type="button" onClick={() => setPeople((p) => p + 1)} aria-label="More servings">

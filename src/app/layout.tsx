@@ -12,15 +12,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body>
+        <a href="#main" className="skip-link">
+          Skip to content
+        </a>
         <header className="site-header">
-          <nav className="nav">
+          <nav className="nav" aria-label="Main">
             <Link href="/" className="logo">
               pantry
             </Link>
             <NavLinks />
           </nav>
         </header>
-        <main className="container">{children}</main>
+        <main id="main" className="container">
+          {children}
+        </main>
       </body>
     </html>
   );
