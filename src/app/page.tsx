@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getDb } from "@/lib/db";
 import { listRecipes, listTags, SORTS, type Sort } from "@/lib/recipes";
 import { formatMinutes, totalMinutes } from "@/lib/time";
+import { SearchShortcut } from "@/components/SearchShortcut";
 
 export const dynamic = "force-dynamic";
 
@@ -37,8 +38,9 @@ export default async function Home({ searchParams }: { searchParams: Promise<Sea
         </Link>
       </div>
 
+      <SearchShortcut />
       <form className="search" action="/">
-        <input name="q" type="search" placeholder="Search recipes or ingredients" defaultValue={q} aria-label="Search recipes" />
+        <input name="q" type="search" placeholder="Search recipes or ingredients  ( / )" defaultValue={q} aria-label="Search recipes" />
         {tag && <input type="hidden" name="tag" value={tag} />}
         {favorites && <input type="hidden" name="fav" value="1" />}
         <select name="sort" defaultValue={sort} aria-label="Sort">
