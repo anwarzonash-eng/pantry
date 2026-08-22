@@ -116,3 +116,15 @@ describe("duplicate", () => {
     expect(duplicateRecipe(d, 999)).toBeNull();
   });
 });
+
+describe("search with accents", () => {
+  it("matches with or without accents", async () => {
+    const { listRecipes } = await import("./recipes");
+    const d = db();
+    createRecipe(d, { title: "Crème Brûlée", ingredients: ["4 egg yolks"], steps: [] });
+    createRecipe(d, { title: "Jalapeño Poppers", ingredients: [], steps: [] });
+    expect(listRecipes(d, { q: "creme brulee" }).map((r) => r.title)).toEqual(["Crème Brûlée"]);
+    expect(listRecipes(d, { q: "BRÛLÉE" })).toHaveLength(1);
+    expect(listRecipes(d, { q: "jalapeno" })).toHaveLength(1);
+  });
+});

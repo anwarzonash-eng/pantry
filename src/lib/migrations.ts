@@ -1,4 +1,5 @@
 import type Database from "better-sqlite3";
+import { fold } from "./fold";
 import { uniqueSlug } from "./slug";
 
 type Migration = string | ((db: Database.Database) => void);
@@ -121,7 +122,13 @@ const MIGRATIONS: Migration[] = [
    CREATE INDEX recipes_updated ON recipes (updated_at);`,
 ];
 
+/** SQL helpers the queries rely on; registered on every connection. */
+export function registerFunctions(db: Database.Database): void {
+  db.function("fold", { deterministic: true }, (value: unknown) => (typeof value === "string" ? fold(value) : value));
+}
+
 export function migrate(db: Database.Database): void {
+  registerFunctions(db);
   const version = db.pragma("user_version", { simple: true }) as number;
   for (let i = version; i < MIGRATIONS.length; i++) {
     db.transaction(() => {

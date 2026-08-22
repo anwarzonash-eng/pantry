@@ -1,4 +1,5 @@
 import type Database from "better-sqlite3";
+import { fold } from "./fold";
 import { uniqueSlug } from "./slug";
 
 export type Recipe = {
@@ -134,9 +135,10 @@ export function listRecipes(db: Database.Database, filter: RecipeFilter = {}): R
     params.push(filter.tag);
   }
   if (filter.favorites) where.push("r.favorite = 1");
-  // every word has to appear in the title, description or ingredients
-  for (const word of (filter.q ?? "").split(/\s+/).filter(Boolean)) {
-    where.push("(r.title LIKE ? OR r.description LIKE ? OR r.ingredients LIKE ?)");
+  // every word has to appear in the title, description or ingredients;
+  // fold() drops accents, so "creme" finds "Crème brûlée" and the other way round
+  for (const word of fold(filter.q ?? "").split(/\s+/).filter(Boolean)) {
+    where.push("(fold(r.title) LIKE ? OR fold(r.description) LIKE ? OR fold(r.ingredients) LIKE ?)");
     const like = `%${word.replace(/[%_]/g, "")}%`;
     params.push(like, like, like);
   }
