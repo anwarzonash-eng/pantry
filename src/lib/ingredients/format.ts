@@ -8,6 +8,8 @@ const FRACTIONS: [number, string][] = [
 
 /** 1.5 -> "1½", 0.333 -> "⅓", 2.4 -> "2.4", 250 -> "250" */
 export function formatQuantity(n: number): string {
+  // halving "¼ tsp" twice gave "0.1"; show small amounts with two decimals instead
+  if (n > 0 && n < 0.1) return String(Math.round(n * 100) / 100 || 0.01);
   const whole = Math.floor(n);
   const rest = n - whole;
   if (rest < 0.02) return String(whole);

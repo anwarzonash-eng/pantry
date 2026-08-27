@@ -13,6 +13,12 @@ describe("formatQuantity", () => {
     expect(formatQuantity(1 / 3)).toBe("⅓");
     expect(formatQuantity(2.75)).toBe("2¾");
   });
+  it("small amounts keep their precision", () => {
+    expect(formatQuantity(1 / 16)).toBe("0.06");
+    expect(formatQuantity(0.004)).toBe("0.01");
+    expect(formatQuantity(0.125)).toBe("⅛");
+  });
+
   it("other decimals are rounded", () => {
     expect(formatQuantity(2.4)).toBe("2.4");
     expect(formatQuantity(0.99)).toBe("1");
