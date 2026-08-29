@@ -71,3 +71,10 @@ export function addManualItem(db: Database.Database, week: string, name: string,
 export function removeItem(db: Database.Database, id: number): void {
   db.prepare("DELETE FROM shopping_items WHERE id = ?").run(id);
 }
+
+/** Names of ticked items, for "put the shopping away" (into the pantry). */
+export function checkedNames(db: Database.Database, week: string): string[] {
+  return (db.prepare("SELECT name FROM shopping_items WHERE week = ? AND checked = 1 AND in_pantry = 0").all(week) as {
+    name: string;
+  }[]).map((r) => r.name);
+}

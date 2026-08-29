@@ -4,7 +4,7 @@ import { addDays, formatDay, isISODate, startOfWeek, toISODate } from "@/lib/dat
 import { formatQuantity } from "@/lib/ingredients/format";
 import { groupByAisle } from "@/lib/shopping/aisles";
 import { listItems, type ShoppingItem } from "@/lib/shopping/list";
-import { addItem, deleteItem, generateList, toggleItem } from "./actions";
+import { addItem, deleteItem, generateList, putAway, toggleItem } from "./actions";
 import { CopyButton } from "./CopyButton";
 import { listAsText } from "@/lib/shopping/text";
 
@@ -35,6 +35,13 @@ export default async function ShoppingPage({ searchParams }: { searchParams: Pro
         {items.length > 0 && <span className="muted">{left} left to buy</span>}
         {left > 0 && <CopyButton text={listAsText(items)} />}
       </form>
+      {items.some((i) => i.checked) && (
+        <form action={putAway.bind(null, monday)} className="toolbar">
+          <button type="submit" className="link-button">
+            Put ticked items in the pantry
+          </button>
+        </form>
+      )}
 
       <form action={addItem.bind(null, monday)} className="add-item">
         <input name="item" placeholder="Add something else, e.g. 2 lemons or dish soap" aria-label="Add an item" />

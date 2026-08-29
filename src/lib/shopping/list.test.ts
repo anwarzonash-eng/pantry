@@ -1,7 +1,7 @@
 import Database from "better-sqlite3";
 import { describe, expect, it } from "vitest";
 import { migrate } from "../migrations";
-import { addManualItem, listItems, removeItem, saveGenerated, setChecked } from "./list";
+import { addManualItem, checkedNames, listItems, removeItem, saveGenerated, setChecked } from "./list";
 
 const line = (name: string, quantity: number | null = 1) => ({ name, quantity, unit: null, recipes: ["Soup"] });
 
@@ -40,5 +40,15 @@ describe("manual items", () => {
     expect(items.map((i) => `${i.name}:${i.manual}`)).toEqual(["dish soap:true", "onion:false"]);
     removeItem(db, items[0].id);
     expect(listItems(db, "2026-02-02").map((i) => i.name)).toEqual(["onion"]);
+  });
+});
+
+describe("checkedNames", () => {
+  it("only ticked items that are not already in the pantry", () => {
+    const db = new Database(":memory:");
+    migrate(db);
+    saveGenerated(db, "2026-08-24", [line("rice"), line("oil"), line("salt")], (n) => n === "salt");
+    for (const i of listItems(db, "2026-08-24")) if (i.name !== "oil") setChecked(db, i.id, true);
+    expect(checkedNames(db, "2026-08-24")).toEqual(["rice"]);
   });
 });

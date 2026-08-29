@@ -4,11 +4,11 @@ import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { parseSystem, UNIT_COOKIE } from "@/lib/ingredients/units";
 import { getDb } from "@/lib/db";
-import { pantryMatcher } from "@/lib/pantry";
+import { addToPantry, pantryMatcher } from "@/lib/pantry";
 import { isISODate } from "@/lib/dates";
 import { shoppingForWeek } from "@/lib/shopping/fromPlan";
 import { parseIngredient } from "@/lib/ingredients/parse";
-import { addManualItem, removeItem, saveGenerated, setChecked } from "@/lib/shopping/list";
+import { addManualItem, checkedNames, removeItem, saveGenerated, setChecked } from "@/lib/shopping/list";
 
 export async function generateList(week: string) {
   if (!isISODate(week)) return;
@@ -35,4 +35,13 @@ export async function addItem(week: string, form: FormData) {
 export async function deleteItem(id: number) {
   removeItem(getDb(), id);
   revalidatePath("/shopping");
+}
+
+/** Everything ticked off goes into the pantry, so next week's list knows you have it. */
+export async function putAway(week: string) {
+  if (!isISODate(week)) return;
+  const db = getDb();
+  addToPantry(db, checkedNames(db, week).join("\n"));
+  revalidatePath("/shopping");
+  revalidatePath("/pantry");
 }
