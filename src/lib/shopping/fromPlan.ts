@@ -9,8 +9,11 @@ import { buildShoppingList, type Needed, type ShoppingLine } from "./build";
 /** Shopping list for the seven days starting at `monday`. */
 export function shoppingForWeek(db: Database.Database, monday: string, system: UnitSystem = "metric"): ShoppingLine[] {
   const needed: Needed[] = [];
+  // the same recipe is often planned several times a week; load and parse it once
+  const recipes = new Map<number, ReturnType<typeof getRecipe>>();
   for (const meal of mealsBetween(db, monday, addDays(monday, 6))) {
-    const recipe = getRecipe(db, meal.recipeId);
+    if (!recipes.has(meal.recipeId)) recipes.set(meal.recipeId, getRecipe(db, meal.recipeId));
+    const recipe = recipes.get(meal.recipeId);
     if (!recipe) continue;
     const factor = meal.servings ? meal.servings / recipe.servings : 1;
     for (const line of recipe.ingredients) {
