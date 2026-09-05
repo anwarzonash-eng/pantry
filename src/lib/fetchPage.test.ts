@@ -20,3 +20,25 @@ describe("fetchPage", () => {
     await expect(fetchPage("https://example.com", missing)).rejects.toThrow(/HTTP 404/);
   });
 });
+
+describe("redirects", () => {
+  const redirectTo = (location: string, then = "<html>ok</html>") => {
+    let calls = 0;
+    return (async () => (calls++ === 0 ? new Response(null, { status: 302, headers: { location } }) : new Response(then))) as typeof fetch;
+  };
+
+  it("follows public redirects, including relative ones", async () => {
+    expect(await fetchPage("https://example.com/a", redirectTo("https://www.example.com/b"))).toBe("<html>ok</html>");
+    expect(await fetchPage("https://example.com/a", redirectTo("/b"))).toBe("<html>ok</html>");
+  });
+
+  it("refuses a redirect to a private address", async () => {
+    await expect(fetchPage("https://example.com/a", redirectTo("http://169.254.169.254/latest"))).rejects.toThrow(/private/);
+    await expect(fetchPage("https://example.com/a", redirectTo("http://localhost:3000/api/backup"))).rejects.toThrow(/private/);
+  });
+
+  it("gives up after a few hops", async () => {
+    const loop = (async () => new Response(null, { status: 301, headers: { location: "https://example.com/again" } })) as typeof fetch;
+    await expect(fetchPage("https://example.com", loop)).rejects.toThrow(/Too many redirects/);
+  });
+});
