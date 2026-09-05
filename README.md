@@ -42,6 +42,10 @@ docker run -d -p 3000:3000 -v pantry-data:/app/data pantry
 
 The database lives in the `pantry-data` volume.
 
+## How it works
+
+See [docs/architecture.md](docs/architecture.md).
+
 ## Tests
 
 ```bash
