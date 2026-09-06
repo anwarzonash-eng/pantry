@@ -240,3 +240,30 @@ export function duplicateRecipe(db: Database.Database, id: number): Recipe | nul
   if (!r) return null;
   return createRecipe(db, { ...r, title: `${r.title} (copy)` });
 }
+
+/** Rename a tag everywhere. Renaming onto an existing tag merges the two. */
+export function renameTag(db: Database.Database, from: string, to: string): void {
+  const name = to.trim();
+  if (!name || name === from) return;
+  db.transaction(() => {
+    const old = db.prepare("SELECT id FROM tags WHERE name = ?").get(from) as { id: number } | undefined;
+    if (!old) return;
+    const existing = db.prepare("SELECT id FROM tags WHERE name = ? AND id != ?").get(name, old.id) as { id: number } | undefined;
+    if (existing) {
+      db.prepare("INSERT OR IGNORE INTO recipe_tags (recipe_id, tag_id) SELECT recipe_id, ? FROM recipe_tags WHERE tag_id = ?").run(existing.id, old.id);
+      db.prepare("DELETE FROM recipe_tags WHERE tag_id = ?").run(old.id);
+      db.prepare("DELETE FROM tags WHERE id = ?").run(old.id);
+    } else {
+      db.prepare("UPDATE tags SET name = ? WHERE id = ?").run(name, old.id);
+    }
+  })();
+}
+
+export function deleteTag(db: Database.Database, name: string): void {
+  db.transaction(() => {
+    const tag = db.prepare("SELECT id FROM tags WHERE name = ?").get(name) as { id: number } | undefined;
+    if (!tag) return;
+    db.prepare("DELETE FROM recipe_tags WHERE tag_id = ?").run(tag.id);
+    db.prepare("DELETE FROM tags WHERE id = ?").run(tag.id);
+  })();
+}

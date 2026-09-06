@@ -70,6 +70,9 @@ export default async function Home({ searchParams }: { searchParams: Promise<Sea
               {t.name} <span className="count">{t.count}</span>
             </Link>
           ))}
+          <Link href="/tags" className="tag">
+            edit tags
+          </Link>
         </p>
       )}
 

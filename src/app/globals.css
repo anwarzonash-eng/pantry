@@ -292,3 +292,10 @@ button:focus-visible, .button:focus-visible { outline-offset: 3px; }
 
 .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
 @media (max-width: 600px) { .two-col { grid-template-columns: 1fr; } }
+
+.tag-admin { list-style: none; padding: 0; }
+.tag-admin li { display: flex; gap: 12px; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--border); }
+.tag-admin form { display: flex; gap: 6px; }
+.tag-admin input { font: inherit; padding: 4px 8px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); color: var(--text); }
+.tag-admin button { font: inherit; font-size: 0.85rem; border: 1px solid var(--border); background: var(--surface); color: var(--text); border-radius: 6px; cursor: pointer; }
+.tag-admin .remove { border: 0; }

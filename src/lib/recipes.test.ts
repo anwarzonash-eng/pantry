@@ -128,3 +128,19 @@ describe("search with accents", () => {
     expect(listRecipes(d, { q: "jalapeno" })).toHaveLength(1);
   });
 });
+
+describe("tag management", () => {
+  it("rename, merge and delete", async () => {
+    const { deleteTag, listTags, renameTag } = await import("./recipes");
+    const d = db();
+    createRecipe(d, { title: "A", ingredients: [], steps: [], tags: ["veggie"] });
+    createRecipe(d, { title: "B", ingredients: [], steps: [], tags: ["vegetarian", "veggie"] });
+    createRecipe(d, { title: "C", ingredients: [], steps: [], tags: ["quick"] });
+
+    renameTag(d, "veggie", "vegetarian");
+    expect(listTags(d)).toEqual([{ name: "quick", count: 1 }, { name: "vegetarian", count: 2 }]);
+    renameTag(d, "quick", "Fast");
+    deleteTag(d, "vegetarian");
+    expect(listTags(d)).toEqual([{ name: "Fast", count: 1 }]);
+  });
+});
