@@ -30,8 +30,16 @@ export function CookMode({ title, slug, steps, ingredients }: { title: string; s
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "ArrowRight" || e.key === " ") setI((n) => Math.min(steps.length - 1, n + 1));
-      if (e.key === "ArrowLeft") setI((n) => Math.max(0, n - 1));
+      // leave keys alone while a button or the ingredient list has focus
+      if ((e.target as HTMLElement).closest("button, summary, input")) return;
+      if (e.key === "ArrowRight" || e.key === " ") {
+        e.preventDefault(); // space also scrolled the page down
+        setI((n) => Math.min(steps.length - 1, n + 1));
+      }
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        setI((n) => Math.max(0, n - 1));
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
