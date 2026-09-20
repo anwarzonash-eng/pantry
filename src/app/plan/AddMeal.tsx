@@ -4,7 +4,7 @@ type Props = { date: string; slot: string; recipes: { id: number; title: string 
 
 export function AddMeal({ date, slot, recipes }: Props) {
   return (
-    <form action={planMeal} className="add-meal">
+    <form action={planMeal} className="add-meal no-print">
       <input type="hidden" name="date" value={date} />
       <input type="hidden" name="slot" value={slot} />
       <select name="recipeId" defaultValue="" aria-label={`Add ${slot} on ${date}`} required>

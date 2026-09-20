@@ -5,6 +5,7 @@ import { mealsBetween, SLOTS, suggestDinners } from "@/lib/plan";
 import { listRecipes } from "@/lib/recipes";
 import { AddMeal } from "./AddMeal";
 import { copyLastWeek, unplanMeal } from "./actions";
+import { PrintButton } from "@/components/PrintButton";
 
 export const dynamic = "force-dynamic";
 
@@ -29,6 +30,7 @@ export default async function PlanPage({ searchParams }: { searchParams: Promise
           <Link href={`/plan?week=${addDays(monday, -7)}`}>← Previous</Link>
           <Link href="/plan">This week</Link>
           <Link href={`/plan?week=${addDays(monday, 7)}`}>Next →</Link>
+          <PrintButton />
         </nav>
       </div>
       {recipes.length === 0 && (

@@ -236,7 +236,11 @@ a.tag:hover, .tag.active { background: var(--accent); color: #fff; }
 
 @media print {
   /* the first printout had the nav bar, the edit links and a half page of margin */
-  .site-header, .actions, .tags, .no-print { display: none !important; }
+  .site-header, .actions, .tags, .no-print, .week-nav, .ideas, .meal .remove, .toolbar { display: none !important; }
+  /* the week fits on one landscape page */
+  .week { grid-template-columns: repeat(7, 1fr) !important; gap: 4px; }
+  .day { display: block !important; border-color: #999; padding: 4px; }
+  .slot { border-left: 0 !important; border-top: 1px dashed #bbb !important; padding: 2px 0 !important; min-height: 28px; }
   .container { max-width: none; padding: 0; }
   h1 { margin-top: 0; }
   .steps li, .ingredients li { break-inside: avoid; }
@@ -299,3 +303,5 @@ button:focus-visible, .button:focus-visible { outline-offset: 3px; }
 .tag-admin input { font: inherit; padding: 4px 8px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); color: var(--text); }
 .tag-admin button { font: inherit; font-size: 0.85rem; border: 1px solid var(--border); background: var(--surface); color: var(--text); border-radius: 6px; cursor: pointer; }
 .tag-admin .remove { border: 0; }
+
+@page { margin: 12mm; }
