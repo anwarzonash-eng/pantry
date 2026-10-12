@@ -79,6 +79,10 @@ npm run build
 
 The logic lives in `src/lib` with no framework imports and is tested against an in-memory SQLite database. See [docs/architecture.md](docs/architecture.md) for how the pieces fit together.
 
+## Roadmap
+
+Logins for internet-facing installs, photo uploads, leftovers in the plan and an offline shopping list are next. See [ROADMAP.md](ROADMAP.md) and [CHANGELOG.md](CHANGELOG.md).
+
 ## License
 
 [MIT](LICENSE)
